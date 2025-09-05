@@ -39,12 +39,12 @@ export default function Home() {
   };
 
   const navItems = [
-    { name: "Home", link: "#" },
-    { name: "Products", link: "#products" },
-    { name: "Docs", link: "#docs" },
+    { name: "Home", link: "/#home" },
     { name: "About", link: "/about" },
+    { name: "Products", link: "/products" },
+    { name: "Docs", link: "/docs" },
     { name: "Pricing", link: "/pricing" },
-    { name: "Contact", link: "#contact" },
+    { name: "Contact", link: "/contact" },
   ];
 
   return (
