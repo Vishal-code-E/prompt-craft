@@ -1,12 +1,9 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { useState } from "react"
-import SignupForm from "./signup-form"
+import Link from "next/link"
 
 const HeroSection = () => {
-  const [showSignup, setShowSignup] = useState(false)
-
   return (
     <section className="relative min-h-screen flex items-center bg-white text-black overflow-hidden">
       {/* Background Accent */}
@@ -62,17 +59,14 @@ const HeroSection = () => {
             Start Building
           </button>
 
-          <button
-            onClick={() => setShowSignup(true)} // <-- open modal instead of signIn
+          <Link
+            href="/signup"
             className="px-8 py-4 bg-transparent border border-black text-black font-medium rounded-full hover:bg-black hover:text-white transition"
           >
             Sign Up
-          </button>
+          </Link>
         </motion.div>
       </div>
-
-      {/* Signup Form Modal */}
-      {showSignup && <SignupForm onClose={() => setShowSignup(false)} />}
     </section>
   )
 }
