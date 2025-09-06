@@ -19,9 +19,6 @@ import {
 } from "@/components/magicui/terminal";
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
 import Footer from "@/components/footer";
-import dynamic from "next/dynamic";
-import Image from "next/image";
-const AboutPage = dynamic(() => import("./Pages/About/page"));
 
 // ✅ NEW IMPORTS
 import { useSession, signIn } from "next-auth/react";
@@ -43,7 +40,7 @@ export default function Home() {
 
   const navItems = [
     { name: "Home", link: "/#home" },
-    { name: "About", link: "/about/page" },
+    { name: "About", link: "/about" },
     { name: "Products", link: "/products" },
     { name: "Docs", link: "/docs" },
     { name: "Pricing", link: "/pricing" },

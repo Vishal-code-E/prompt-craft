@@ -1,3 +1,4 @@
+"use client"
 import { WobbleCard } from "@/components/ui/wobble-card";
 
 export default function AboutPage() {
