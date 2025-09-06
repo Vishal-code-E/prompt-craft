@@ -20,6 +20,7 @@ import {
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
 import Footer from "@/components/footer";
 import dynamic from "next/dynamic";
+import Image from "next/image";
 const AboutPage = dynamic(() => import("./Pages/About/page"));
 
 // ✅ NEW IMPORTS
@@ -153,31 +154,6 @@ export default function Home() {
           </p>
         </div>
       </div>
-
-      {/* Scroll Animation Section */}
-      <ContainerScroll
-        titleComponent={
-          <h2 className="text-3xl md:text-5xl font-bold text-white">
-        PromptCraft Labs <br />
-        <span className="text-black">
-          Generate <span className="text-green-400">JSON</span>-driven
-          prompts for content, websites &amp; DBs
-        </span>
-          </h2>
-        }
-      >
-        <div className="flex flex-col items-center justify-center h-full text-center space-y-4">
-          <p className="text-lg text-gray-300">
-        A playground where prompts become structured workflows.
-          </p>
-          <p className="text-md text-gray-400">
-        Export as JSON, integrate directly into your stack.
-          </p>
-        </div>
-      </ContainerScroll>
-
-      {/* Hero Section One below */}
-      <HeroSectionOne />
 
       {/* Scroll Animation Section */}
       <ContainerScroll
