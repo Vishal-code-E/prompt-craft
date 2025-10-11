@@ -1,6 +1,4 @@
 
-import Footer from "@/components/footer";
-
 export default function AboutPage() {
   return (
     <div className="flex flex-col min-h-screen bg-white text-black">
@@ -86,9 +84,6 @@ export default function AboutPage() {
           </a>
         </section>
       </main>
-
-      {/* Footer */}
-      <Footer />
     </div>
   );
 }

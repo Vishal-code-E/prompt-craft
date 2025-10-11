@@ -8,7 +8,6 @@ import {
   TypingAnimation,
 } from "@/components/magicui/terminal";
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
-import Footer from "@/components/footer";
 
 
 
@@ -96,8 +95,6 @@ export default function Home() {
           </p>
         </div>
       </ContainerScroll>
-
-      <Footer />
     </>
   );
 }
