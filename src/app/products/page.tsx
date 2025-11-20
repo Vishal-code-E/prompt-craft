@@ -400,6 +400,109 @@ export default function ProductsPage() {
         </div>
       </section>
 
+      {/* Prompt Transformation - Compare */}
+      <section className="py-20 px-6 bg-gradient-to-b from-white to-gray-50">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">
+              Transform Plain Prompts to <span className="text-[#00FF88]">Structured Code</span>
+            </h2>
+            <p className="text-xl text-gray-600">
+              See how PromptCraft converts natural language into versioned, testable prompt infrastructure
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 gap-6 mb-12">
+            {/* Before - Plain Text */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+              className="bg-gradient-to-br from-gray-50 to-gray-100 p-8 rounded-2xl shadow-lg border border-gray-200"
+            >
+              <div className="flex items-center gap-2 mb-6">
+                <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                <h3 className="text-xl font-bold text-gray-800">Plain English Prompt</h3>
+              </div>
+              <div className="space-y-4 text-gray-700">
+                <p className="text-base leading-relaxed">
+                  Write a creative product description for a smart home device that monitors air quality. 
+                  Include benefits, target audience, and make it engaging.
+                </p>
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  Make it sound professional but friendly.
+                </p>
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  Focus on health benefits.
+                </p>
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  Target eco-conscious millennials.
+                </p>
+              </div>
+              <div className="mt-8 pt-6 border-t border-gray-300">
+                <h4 className="font-semibold mb-3 text-gray-800">Issues:</h4>
+                <ul className="space-y-2 text-sm text-gray-600">
+                  <li>❌ Hard to version control</li>
+                  <li>❌ Difficult to test</li>
+                  <li>❌ No reusability</li>
+                  <li>❌ Context lost over time</li>
+                </ul>
+              </div>
+            </motion.div>
+
+            {/* After - JSON Structure */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="bg-[#1e1e1e] p-8 rounded-2xl shadow-lg border border-gray-700"
+            >
+              <div className="flex items-center gap-2 mb-6">
+                <div className="w-3 h-3 bg-[#00FF88] rounded-full"></div>
+                <h3 className="text-xl font-bold text-[#00FF88]">Structured JSON Prompt</h3>
+              </div>
+              <pre className="text-sm text-gray-300 leading-relaxed overflow-x-auto">
+{`{
+  "version": "1.0.0",
+  "metadata": {
+    "name": "product-desc-gen",
+    "author": "marketing-team"
+  },
+  "prompt": {
+    "role": "marketing_copywriter",
+    "task": "generate_description",
+    "context": {
+      "product": "smart_air_monitor"
+    },
+    "requirements": [
+      "creative_tone",
+      "professional_friendly",
+      "health_benefits",
+      "target_millennials",
+      "eco_conscious"
+    ]
+  }
+}`}
+              </pre>
+              <div className="mt-8 pt-6 border-t border-gray-700">
+                <h4 className="font-semibold mb-3 text-[#00FF88]">Benefits:</h4>
+                <ul className="space-y-2 text-sm text-gray-300">
+                  <li>✅ Version controlled & tracked</li>
+                  <li>✅ Unit testable & validated</li>
+                  <li>✅ Reusable across projects</li>
+                  <li>✅ Clear metadata & context</li>
+                </ul>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
       {/* Final CTA */}
       <section className="relative py-20 px-6 bg-gradient-to-br from-gray-900 to-black text-white overflow-hidden">
         <div className="absolute inset-0 opacity-10">

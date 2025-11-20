@@ -65,7 +65,7 @@ export default function Home() {
           </Terminal>
         </div>
         {/* Side Text Section (Right) */}
-        <div className="w-full md:w-1/3 flex flex-col items-center justify-center text-center">
+        <div className="w-full md:w-1/3 flex flex-col items-center justify-center text-center ml-auto pr-8">
           <h3 className="text-2xl font-bold mb-2">Why PromptCraft?</h3>
           <p className="text-gray-600">
         Build, test, and export structured prompts for your apps and workflows.<br />
