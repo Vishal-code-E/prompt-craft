@@ -38,7 +38,7 @@ export default function Home() {
       {/* Terminal + Side Text Section */}
       <div className="flex flex-col md:flex-row-reverse items-center gap-8 w-full mt-8">
         {/* Terminal Section (Left) */}
-        <div className="w-full md:w-2/3 md:pl-12">
+        <div className="w-full md:w-2/3 mr-auto pl-8">
           <Terminal>
             <TypingAnimation>&gt; pnpm dlx prompt-craft@latest init</TypingAnimation>
 
