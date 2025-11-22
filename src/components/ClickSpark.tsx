@@ -153,10 +153,16 @@ const ClickSpark: React.FC<ClickSparkProps> = ({
   };
 
   return (
-    <div className="relative w-full min-h-screen" onClick={handleClick}>
-      <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-[9999]" />
-      {children}
-    </div>
+    <>
+      <canvas 
+        ref={canvasRef} 
+        className="fixed inset-0 pointer-events-none z-50" 
+        style={{ pointerEvents: 'none' }}
+      />
+      <div className="relative w-full min-h-screen" onClick={handleClick}>
+        {children}
+      </div>
+    </>
   );
 };
 

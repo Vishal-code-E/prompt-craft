@@ -28,7 +28,7 @@ export default function SignupForm({ onClose }: SignupFormProps) {
   }
 
   return (
-    <div className="w-full max-w-md mx-auto rounded-2xl border border-gray-200 bg-white p-6 shadow-lg relative">
+    <div className="w-full max-w-md mx-auto rounded-2xl border border-gray-200 bg-white p-6 shadow-lg relative z-[101]">
       {/* Close Button if passed */}
       {onClose && (
         <button
@@ -109,7 +109,7 @@ export default function SignupForm({ onClose }: SignupFormProps) {
       </div>
 
       <button
-        onClick={() => signIn("google")}
+        onClick={() => signIn("google", { callbackUrl: "/" })}
         className="w-full rounded-lg bg-white px-4 py-2 font-semibold text-black border border-gray-200 shadow-sm transition hover:bg-gray-50"
       >
         Continue with Google
