@@ -24,9 +24,9 @@ const HeroSection = () => {
         }}
       />
 
-      {/* Content Block (aligned to extreme right) */}
-      <div className="relative z-10 w-full px-6 flex justify-end">
-        <div className="max-w-2xl text-right pr-12">
+      {/* Content Block (aligned to extreme left) */}
+      <div className="relative z-10 w-full px-6 flex justify-start">
+        <div className="max-w-2xl text-left pl-12">
           {/* Heading */}
           <motion.h1
             className="text-5xl md:text-7xl font-serif font-bold leading-tight tracking-tight"
@@ -51,7 +51,7 @@ const HeroSection = () => {
 
           {/* CTA Buttons */}
           <motion.div
-            className="mt-10 flex flex-wrap gap-4 justify-end"
+            className="mt-10 flex flex-wrap gap-4 justify-start"
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.4 }}
