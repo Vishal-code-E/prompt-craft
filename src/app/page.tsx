@@ -8,6 +8,7 @@ import {
   TypingAnimation,
 } from "@/components/magicui/terminal";
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
+import { TextGenerateEffect } from "@/components/ui/text-generate-effect";
 
 
 
@@ -65,11 +66,17 @@ export default function Home() {
           </Terminal>
         </div>
         {/* Side Text Section (Right) */}
-        <div className="w-full md:w-1/3 flex flex-col items-center justify-center text-center ml-auto pr-8">
-          <h3 className="text-2xl font-bold mb-2">Why PromptCraft?</h3>
-          <p className="text-gray-600">
-        Build, test, and export structured prompts for your apps and workflows.<br />
-        <span className="text-green-500 font-semibold">Fast. Flexible. JSON-powered.</span>
+        <div className="w-full md:w-1/3 flex flex-col items-center justify-center text-center ml-auto pr-4 pl-24">
+          <h3 className="text-2xl md:text-3xl font-bold mb-4">
+            Why <span className="text-[#00FF88] drop-shadow-[1px_1px_2px_rgba(0,0,0,0.6)]">PromptCraft</span>?
+          </h3>
+          <TextGenerateEffect 
+            words="Build, test, and export structured prompts for your apps and workflows. Fast. Flexible."
+            className="text-lg md:text-xl text-gray-700"
+            duration={0.8}
+          />
+          <p className="mt-3 text-lg md:text-xl font-semibold">
+            <span className="text-[#00FF88] drop-shadow-[1px_1px_2px_rgba(0,0,0,0.6)]">JSON</span>-powered.
           </p>
         </div>
       </div>
