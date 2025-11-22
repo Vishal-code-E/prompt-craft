@@ -73,12 +73,12 @@ const HeroSection = () => {
 
         {/* Card Placeholder on the Right */}
         <motion.div
-          className="flex-shrink-0 hidden lg:block mr-24"
+          className="flex-shrink-0 hidden lg:block mr-40"
           initial={{ opacity: 0, x: 40 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
         >
-          <Card className="w-96 shadow-2xl border-gray-200">
+          <Card className="w-[450px] shadow-2xl border-gray-200">
             <CardHeader>
               <CardTitle className="text-2xl">Quick Start</CardTitle>
               <CardDescription>
@@ -100,8 +100,8 @@ const HeroSection = () => {
                   <p className="text-sm text-gray-700 mb-2">Latest Prompt:</p>
                   <div className="bg-white p-3 rounded border border-gray-100">
                     <p className="text-xs text-gray-600 font-mono">
-                      &#123; "version": "1.0.0",<br />
-                      &nbsp;&nbsp;"role": "copywriter" &#125;
+                      &#123; &quot;version&quot;: &quot;1.0.0&quot;,<br />
+                      &nbsp;&nbsp;&quot;role&quot;: &quot;copywriter&quot; &#125;
                     </p>
                   </div>
                 </div>
