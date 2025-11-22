@@ -26,16 +26,16 @@ const HeroSection = () => {
 
       {/* Content Block (aligned to extreme left) */}
       <div className="relative z-10 w-full px-6 flex justify-start">
-        <div className="max-w-2xl text-left pl-12">
+        <div className="text-left pl-12">
           {/* Heading */}
           <motion.h1
-            className="text-5xl md:text-7xl font-serif font-bold leading-tight tracking-tight"
+            className="text-3xl md:text-5xl font-serif font-bold leading-snug tracking-tight"
             initial={{ opacity: 0, y: -40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            Craft <span className="block md:inline">exceptional</span>{" "}
-            <span className="block md:inline">prompts & experiences.</span>
+            <span className="whitespace-nowrap">Craft Exceptional Prompts</span> <br />
+            <span className="whitespace-nowrap">& Experience Building</span>
           </motion.h1>
 
           {/* Subtext */}
@@ -45,8 +45,8 @@ const HeroSection = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            Build prompts developers love and AI models understand. Generate,
-            refine, and deploy — all in one seamless workflow.
+            Build prompts developers love and AI models understand. <br />
+            Generate, refine, and deploy — all in one seamless workflow.
           </motion.p>
 
           {/* CTA Buttons */}
