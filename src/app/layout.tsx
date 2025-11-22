@@ -4,6 +4,7 @@ import Providers from "./providers";
 
 import GlobalNavbar from "@/components/global-navbar";
 import Footer from "@/components/footer";
+import ClickSpark from "@/components/ClickSpark";
 
 export const metadata: Metadata = {
   title: "Prompt Craft",
@@ -19,13 +20,24 @@ export default function RootLayout({
     <html lang="en">
       <body className="bg-white text-black antialiased" suppressHydrationWarning={true}>
         <Providers>
-          {/* ✅ Global Navbar across all pages */}
-          <GlobalNavbar />
+          <ClickSpark
+            sparkColor="#00FF88"
+            sparkSize={12}
+            sparkRadius={20}
+            sparkCount={10}
+            duration={500}
+            easing="ease-out"
+          >
+            <div className="min-h-screen">
+              {/* ✅ Global Navbar across all pages */}
+              <GlobalNavbar />
 
-          <div className="relative z-10 flex flex-col min-h-screen">
-            <main className="flex-grow">{children}</main>
-            <Footer />
-          </div>
+              <div className="relative z-10 flex flex-col min-h-screen">
+                <main className="flex-grow">{children}</main>
+                <Footer />
+              </div>
+            </div>
+          </ClickSpark>
         </Providers>
       </body>
     </html>

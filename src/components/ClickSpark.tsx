@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useRef, useEffect, useCallback } from 'react';
 
 interface ClickSparkProps {
@@ -151,8 +153,8 @@ const ClickSpark: React.FC<ClickSparkProps> = ({
   };
 
   return (
-    <div className="relative w-full h-full" onClick={handleClick}>
-      <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none" />
+    <div className="relative w-full min-h-screen" onClick={handleClick}>
+      <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-[9999]" />
       {children}
     </div>
   );
