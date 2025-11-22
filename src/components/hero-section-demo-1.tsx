@@ -3,8 +3,10 @@
 import { motion } from "framer-motion"
 import Link from "next/link"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { useSession, signOut } from "next-auth/react"
 
 const HeroSection = () => {
+  const { data: session } = useSession();
   return (
     <section className="relative min-h-screen flex items-center bg-white text-black overflow-hidden">
       {/* Background Accent */}
@@ -53,7 +55,7 @@ const HeroSection = () => {
 
           {/* CTA Buttons */}
           <motion.div
-            className="mt-10 flex flex-wrap gap-4 justify-start"
+            className="mt-10 flex flex-wrap gap-4 justify-start items-center"
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.4 }}
@@ -62,12 +64,33 @@ const HeroSection = () => {
               Start Building
             </button>
 
-            <Link
-              href="/signup"
-              className="px-8 py-4 bg-transparent border border-black text-black font-medium rounded-full hover:bg-black hover:text-white transition"
-            >
-              Sign Up
-            </Link>
+            {!session ? (
+              <Link
+                href="/signup"
+                className="px-8 py-4 bg-transparent border border-black text-black font-medium rounded-full hover:bg-black hover:text-white transition"
+              >
+                Sign In
+              </Link>
+            ) : (
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3 px-6 py-3 bg-white border border-gray-200 rounded-full shadow-sm">
+                  {session.user?.image && (
+                    <img src={session.user.image} alt="Profile" className="w-8 h-8 rounded-full" />
+                  )}
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">
+                      Welcome back, {session.user?.name?.split(' ')[0] || 'User'}! 👋
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => signOut()}
+                  className="px-6 py-3 text-sm bg-transparent border border-gray-300 text-gray-700 font-medium rounded-full hover:bg-gray-50 transition"
+                >
+                  Sign Out
+                </button>
+              </div>
+            )}
           </motion.div>
         </div>
 
