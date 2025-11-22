@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion"
 import Link from "next/link"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 const HeroSection = () => {
   return (
@@ -24,9 +25,10 @@ const HeroSection = () => {
         }}
       />
 
-      {/* Content Block (aligned to extreme left) */}
-      <div className="relative z-10 w-full px-6 flex justify-start">
-        <div className="text-left pl-12">
+      {/* Main Content Container */}
+      <div className="relative z-10 w-full px-6 flex justify-between items-center gap-12">
+        {/* Content Block (aligned to extreme left) */}
+        <div className="text-left pl-12 flex-shrink-0">
           {/* Heading */}
           <motion.h1
             className="text-3xl md:text-5xl font-serif font-bold leading-snug tracking-tight"
@@ -68,6 +70,53 @@ const HeroSection = () => {
             </Link>
           </motion.div>
         </div>
+
+        {/* Card Placeholder on the Right */}
+        <motion.div
+          className="flex-shrink-0 hidden lg:block mr-24"
+          initial={{ opacity: 0, x: 40 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
+        >
+          <Card className="w-96 shadow-2xl border-gray-200">
+            <CardHeader>
+              <CardTitle className="text-2xl">Quick Start</CardTitle>
+              <CardDescription>
+                See PromptCraft in action with a live preview
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <span className="text-sm font-medium">Active Workspace</span>
+                  </div>
+                  <code className="text-xs text-gray-600 block">
+                    /prompts/marketing.json
+                  </code>
+                </div>
+                <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                  <p className="text-sm text-gray-700 mb-2">Latest Prompt:</p>
+                  <div className="bg-white p-3 rounded border border-gray-100">
+                    <p className="text-xs text-gray-600 font-mono">
+                      &#123; "version": "1.0.0",<br />
+                      &nbsp;&nbsp;"role": "copywriter" &#125;
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-600">Templates</span>
+                  <span className="font-semibold">24</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-600">Deployed</span>
+                  <span className="font-semibold">12</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
       </div>
     </section>
   )
