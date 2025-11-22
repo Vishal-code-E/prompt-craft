@@ -60,9 +60,12 @@ const HeroSection = () => {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.4 }}
           >
-            <button className="px-8 py-4 bg-black text-white font-medium rounded-full hover:bg-gray-900 transition">
+            <Link
+              href="/products"
+              className="px-8 py-4 bg-black text-white font-medium rounded-full hover:bg-gray-900 transition"
+            >
               Start Building
-            </button>
+            </Link>
 
             {!session ? (
               <Link
