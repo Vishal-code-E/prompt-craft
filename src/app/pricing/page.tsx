@@ -217,12 +217,14 @@ export default function PricingPage() {
                   </thead>
                   <tbody>
                     {[
-                      { feature: "Number of prompts", starter: "10", pro: "Unlimited", enterprise: "Unlimited" },
+                      { feature: "Number of prompts", starter: "10/day", pro: "Unlimited", enterprise: "Unlimited" },
                       { feature: "JSON Editor", starter: "✓", pro: "✓", enterprise: "✓" },
                       { feature: "AI Validation", starter: "✓", pro: "✓", enterprise: "✓" },
-                      { feature: "Team Collaboration", starter: "✗", pro: "✓", enterprise: "✓" },
-                      { feature: "Version Control", starter: "✗", pro: "✓", enterprise: "✓" },
+                      { feature: "Custom Prompt Libraries", starter: "✗", pro: "✓", enterprise: "✓" },
+                      { feature: "TOON - Your Custom Built", starter: "✗", pro: "✓", enterprise: "✓" },
                       { feature: "API Integration", starter: "✗", pro: "✓", enterprise: "✓" },
+                      { feature: "Team Collaboration", starter: "✗", pro: "✗", enterprise: "✓" },
+                      { feature: "Version Control", starter: "✗", pro: "✗", enterprise: "✓" },
                       { feature: "On-prem Setup", starter: "✗", pro: "✗", enterprise: "✓" },
                       { feature: "Priority Support", starter: "✗", pro: "✗", enterprise: "✓" },
                     ].map((row, i) => (

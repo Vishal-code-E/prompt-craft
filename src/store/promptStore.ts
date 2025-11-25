@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { JSONOutput } from '@/utils/buildJSON';
 
 export interface PromptState {
     mainTask: string;
@@ -18,6 +19,11 @@ export interface PromptState {
         chapters: number;
         uniqueness: number;
     };
+    // AI generation state
+    generatedJSON: JSONOutput | null;
+    generatedTOON: string | null;
+    isGenerating: boolean;
+    generationError: string | null;
 }
 
 interface PromptActions {
@@ -33,6 +39,13 @@ interface PromptActions {
     setMaxWords: (value: number) => void;
     setMaxChapters: (value: number) => void;
     setUniqueness: (value: number) => void;
+    // AI integration actions
+    loadFromAI: (data: JSONOutput) => void;
+    setGeneratedJSON: (json: JSONOutput | null) => void;
+    setGeneratedTOON: (toon: string | null) => void;
+    setIsGenerating: (loading: boolean) => void;
+    setGenerationError: (error: string | null) => void;
+    resetGeneration: () => void;
 }
 
 type PromptStore = PromptState & PromptActions;
@@ -56,6 +69,11 @@ export const usePromptStore = create<PromptStore>((set) => ({
         chapters: 1,
         uniqueness: 100,
     },
+    // AI generation state
+    generatedJSON: null,
+    generatedTOON: null,
+    isGenerating: false,
+    generationError: null,
 
     // Actions
     setMainTask: (task) => set({ mainTask: task }),
@@ -103,4 +121,41 @@ export const usePromptStore = create<PromptStore>((set) => ({
     setUniqueness: (value) => set((state) => ({
         limits: { ...state.limits, uniqueness: value },
     })),
+
+    // AI integration actions
+    loadFromAI: (data: JSONOutput) => set({
+        mainTask: data.task,
+        rules: data.rules,
+        story: {
+            genre: data.storyConfig.genre,
+            plot: data.storyConfig.plot,
+            specifics: data.storyConfig.specifics,
+        },
+        moderation: {
+            vulgar: data.moderation.allowVulgar,
+            cussing: data.moderation.allowCussing,
+        },
+        limits: {
+            minWords: data.limits.minWords,
+            maxWords: data.limits.maxWords,
+            chapters: data.limits.maxChapters,
+            uniqueness: data.limits.uniqueness,
+        },
+        generatedJSON: data,
+    }),
+
+    setGeneratedJSON: (json) => set({ generatedJSON: json }),
+
+    setGeneratedTOON: (toon) => set({ generatedTOON: toon }),
+
+    setIsGenerating: (loading) => set({ isGenerating: loading }),
+
+    setGenerationError: (error) => set({ generationError: error }),
+
+    resetGeneration: () => set({
+        generatedJSON: null,
+        generatedTOON: null,
+        isGenerating: false,
+        generationError: null,
+    }),
 }));
