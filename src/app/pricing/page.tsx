@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 interface PricingTier {
   name: string;
@@ -20,25 +21,22 @@ const pricingTiers: PricingTier[] = [
     price: "Free",
     description: "Perfect for individual developers and experimentation",
     features: [
-      "10 prompts",
+      "10 prompts per day",
       "JSON editor",
       "AI validation suggestions",
-      "Community access",
       "Basic templates"
     ],
     buttonText: "Get Started"
   },
   {
     name: "Pro",
-    price: "$15/month",
+    price: "$3/month",
     description: "Ideal for teams and collaborative workflows",
     features: [
       "Unlimited prompts",
-      "Team collaboration",
-      "Version control",
       "Custom prompt libraries",
       "API integration",
-      "Advanced analytics"
+      "TOON - Your Custom Built"
     ],
     buttonText: "Select Plan",
     popular: true,
@@ -80,8 +78,13 @@ const faqs = [
 ];
 
 export default function PricingPage() {
+  const router = useRouter();
   const [showComparison, setShowComparison] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+
+  const handleGetStarted = () => {
+    router.push('/signup');
+  };
 
   return (
     <div className="flex flex-col min-h-screen bg-white text-black">
@@ -104,10 +107,13 @@ export default function PricingPage() {
               Scale from solo experiments to full-stack AI workflows — all powered by structured JSON prompts.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="px-8 py-3 bg-black text-white rounded-lg font-semibold hover:bg-gray-800 transition-colors">
+              <button
+                onClick={handleGetStarted}
+                className="px-8 py-3 bg-black text-white rounded-lg font-semibold hover:bg-gray-800 transition-colors"
+              >
                 Get Started
               </button>
-              <button 
+              <button
                 onClick={() => setShowComparison(!showComparison)}
                 className="px-8 py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-semibold hover:border-gray-400 transition-colors"
               >
@@ -141,7 +147,7 @@ export default function PricingPage() {
                     </span>
                   </div>
                 )}
-                
+
                 <div className="text-center mb-6">
                   <h3 className="text-2xl font-bold mb-2">{tier.name}</h3>
                   <div className="mb-4">
@@ -165,6 +171,11 @@ export default function PricingPage() {
                 </ul>
 
                 <button
+                  onClick={() => {
+                    if (tier.buttonText === "Get Started" || tier.buttonText === "Select Plan") {
+                      handleGetStarted();
+                    }
+                  }}
                   className={cn(
                     "w-full py-3 px-6 rounded-lg font-semibold transition-colors",
                     tier.popular
