@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { PageHeader } from '@/components/builder/PageHeader';
-import { Container } from '@/components/builder/Container';
 import { QuickPromptGenerator } from '@/components/builder/QuickPromptGenerator';
 import { FineTuneSection } from '@/components/builder/FineTuneSection';
 import { RulesSection } from '@/components/builder/RulesSection';
@@ -10,46 +9,127 @@ import { StoryConfigSection } from '@/components/builder/StoryConfigSection';
 import { ModerationToggles } from '@/components/builder/ModerationToggles';
 import { NumericControls } from '@/components/builder/NumericControls';
 import { JSONPreviewPanel } from '@/components/builder/JSONPreviewPanel';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { Sparkles, Settings, Shield, FileText, Sliders } from 'lucide-react';
 
 export default function BuilderPage() {
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
+        <div className="min-h-screen bg-linear-to-br from-slate-50 via-white to-gray-50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 <PageHeader />
 
-                <div className="grid lg:grid-cols-[1fr,500px] gap-8">
+                <div className="grid lg:grid-cols-[1fr,520px] gap-8 mt-8">
                     {/* Left Column - Form Controls */}
                     <div className="space-y-6">
-                        <Container>
-                            <QuickPromptGenerator />
-                        </Container>
+                        {/* Quick Start Card */}
+                        <Card className="border-2 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                            <CardHeader className="space-y-1">
+                                <div className="flex items-center gap-2">
+                                    <Sparkles className="w-5 h-5 text-[#00FF88]" />
+                                    <CardTitle className="text-xl">Quick Start</CardTitle>
+                                    <Badge variant="secondary" className="ml-auto">New</Badge>
+                                </div>
+                                <CardDescription>
+                                    Generate prompts quickly with AI assistance
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <QuickPromptGenerator />
+                            </CardContent>
+                        </Card>
 
-                        <Container>
-                            <FineTuneSection />
-                        </Container>
+                        {/* Configuration Tabs */}
+                        <Card className="border-2 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                            <CardHeader>
+                                <div className="flex items-center gap-2">
+                                    <Settings className="w-5 h-5 text-[#00FF88]" />
+                                    <CardTitle className="text-xl">Configuration</CardTitle>
+                                </div>
+                            </CardHeader>
+                            <CardContent>
+                                <Tabs defaultValue="finetune" className="w-full">
+                                    <TabsList className="grid w-full grid-cols-3 mb-6">
+                                        <TabsTrigger value="finetune" className="gap-2">
+                                            <Sliders className="w-4 h-4" />
+                                            Fine-tune
+                                        </TabsTrigger>
+                                        <TabsTrigger value="rules" className="gap-2">
+                                            <Shield className="w-4 h-4" />
+                                            Rules
+                                        </TabsTrigger>
+                                        <TabsTrigger value="story" className="gap-2">
+                                            <FileText className="w-4 h-4" />
+                                            Story
+                                        </TabsTrigger>
+                                    </TabsList>
+                                    
+                                    <TabsContent value="finetune" className="space-y-4">
+                                        <FineTuneSection />
+                                    </TabsContent>
+                                    
+                                    <TabsContent value="rules" className="space-y-4">
+                                        <RulesSection />
+                                    </TabsContent>
+                                    
+                                    <TabsContent value="story" className="space-y-4">
+                                        <StoryConfigSection />
+                                    </TabsContent>
+                                </Tabs>
+                            </CardContent>
+                        </Card>
 
-                        <Container>
-                            <RulesSection />
-                        </Container>
-
-                        <Container>
-                            <StoryConfigSection />
-                        </Container>
-
-                        <Container>
-                            <ModerationToggles />
-                        </Container>
-
-                        <Container>
-                            <NumericControls />
-                        </Container>
+                        {/* Advanced Settings Card */}
+                        <Card className="border-2 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                            <CardHeader>
+                                <CardTitle className="text-xl">Advanced Settings</CardTitle>
+                                <CardDescription>
+                                    Fine-tune moderation and numeric parameters
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-6">
+                                <div>
+                                    <h3 className="text-sm font-semibold mb-4 flex items-center gap-2">
+                                        <Shield className="w-4 h-4 text-[#00FF88]" />
+                                        Moderation Controls
+                                    </h3>
+                                    <ModerationToggles />
+                                </div>
+                                
+                                <Separator className="my-6" />
+                                
+                                <div>
+                                    <h3 className="text-sm font-semibold mb-4 flex items-center gap-2">
+                                        <Sliders className="w-4 h-4 text-[#00FF88]" />
+                                        Numeric Parameters
+                                    </h3>
+                                    <NumericControls />
+                                </div>
+                            </CardContent>
+                        </Card>
                     </div>
 
                     {/* Right Column - JSON Preview (Sticky) */}
                     <div className="lg:sticky lg:top-8 h-fit">
-                        <Container>
-                            <JSONPreviewPanel />
-                        </Container>
+                        <Card className="border-2 shadow-lg hover:shadow-xl transition-shadow duration-300 border-[#00FF88]/20">
+                            <CardHeader>
+                                <div className="flex items-center gap-2">
+                                    <div className="w-2 h-2 rounded-full bg-[#00FF88] animate-pulse" />
+                                    <CardTitle className="text-xl">Live Preview</CardTitle>
+                                    <Badge className="ml-auto bg-[#00FF88] text-black hover:bg-[#00FF88]/90">
+                                        Real-time
+                                    </Badge>
+                                </div>
+                                <CardDescription>
+                                    Your configuration updates instantly
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <JSONPreviewPanel />
+                            </CardContent>
+                        </Card>
                     </div>
                 </div>
             </div>
