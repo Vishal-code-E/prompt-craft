@@ -97,7 +97,7 @@ export function JSONPreviewPanel() {
             {/* Content */}
             <div className="relative">
                 {activeTab === 'json' ? (
-                    <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto max-h-[600px] overflow-y-auto">
+                    <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto max-h-[600px] overflow-y-auto" suppressHydrationWarning>
                         <code ref={codeRef} className="language-json">
                             {jsonString}
                         </code>
