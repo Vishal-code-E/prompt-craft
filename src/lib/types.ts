@@ -1,0 +1,45 @@
+/**
+ * Prisma enum types
+ * These will be replaced by generated types after running: npx prisma generate
+ * For now, we define them manually to avoid TypeScript errors
+ */
+
+export enum MemberRole {
+  OWNER = 'OWNER',
+  ADMIN = 'ADMIN',
+  MEMBER = 'MEMBER',
+  VIEWER = 'VIEWER'
+}
+
+export enum WorkspacePlan {
+  FREE = 'FREE',
+  PRO = 'PRO',
+  TEAM = 'TEAM'
+}
+
+export enum AuditAction {
+  PROMPT_CREATED = 'PROMPT_CREATED',
+  PROMPT_UPDATED = 'PROMPT_UPDATED',
+  PROMPT_DELETED = 'PROMPT_DELETED',
+  PROMPT_SHARED = 'PROMPT_SHARED',
+  WORKSPACE_CREATED = 'WORKSPACE_CREATED',
+  WORKSPACE_UPDATED = 'WORKSPACE_UPDATED',
+  WORKSPACE_MEMBER_ADDED = 'WORKSPACE_MEMBER_ADDED',
+  WORKSPACE_MEMBER_REMOVED = 'WORKSPACE_MEMBER_REMOVED',
+  WORKSPACE_MEMBER_ROLE_CHANGED = 'WORKSPACE_MEMBER_ROLE_CHANGED',
+  PLAN_CHANGED = 'PLAN_CHANGED',
+  PLAN_UPGRADED = 'PLAN_UPGRADED',
+  PLAN_DOWNGRADED = 'PLAN_DOWNGRADED',
+  USER_INVITED = 'USER_INVITED',
+  USER_JOINED = 'USER_JOINED'
+}
+
+export enum SubscriptionStatus {
+  ACTIVE = 'ACTIVE',
+  CANCELED = 'CANCELED',
+  INCOMPLETE = 'INCOMPLETE',
+  INCOMPLETE_EXPIRED = 'INCOMPLETE_EXPIRED',
+  PAST_DUE = 'PAST_DUE',
+  TRIALING = 'TRIALING',
+  UNPAID = 'UNPAID'
+}

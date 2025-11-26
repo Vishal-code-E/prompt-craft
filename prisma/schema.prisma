@@ -1,0 +1,247 @@
+// This is your Prisma schema file
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// NextAuth models
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// User model
+model User {
+  id                 String              @id @default(cuid())
+  name               String?
+  email              String              @unique
+  emailVerified      DateTime?
+  image              String?
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  defaultWorkspaceId String?
+  accounts           Account[]
+  sessions           Session[]
+  workspaceMembers   WorkspaceMember[]
+  ownedWorkspaces    Workspace[]         @relation("WorkspaceOwner")
+  prompts            Prompt[]            @relation("PromptCreator")
+  promptVersions     PromptVersion[]
+  auditLogs          AuditLog[]
+  stripeCustomer     StripeCustomer?
+  defaultWorkspace   Workspace?          @relation("DefaultWorkspace", fields: [defaultWorkspaceId], references: [id], onDelete: SetNull)
+
+  @@index([email])
+  @@index([defaultWorkspaceId])
+}
+
+enum WorkspacePlan {
+  FREE
+  PRO
+  TEAM
+}
+
+// Workspace model
+model Workspace {
+  id                  String              @id @default(cuid())
+  name                String
+  ownerId             String
+  plan                WorkspacePlan       @default(FREE)
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  owner               User                @relation("WorkspaceOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  members             WorkspaceMember[]
+  prompts             Prompt[]
+  auditLogs           AuditLog[]
+  subscription        Subscription?
+  defaultForUsers     User[]              @relation("DefaultWorkspace")
+
+  @@index([ownerId])
+}
+
+enum MemberRole {
+  OWNER
+  ADMIN
+  MEMBER
+  VIEWER
+}
+
+// Workspace membership
+model WorkspaceMember {
+  id          String      @id @default(cuid())
+  userId      String
+  workspaceId String
+  role        MemberRole
+  joinedAt    DateTime    @default(now())
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace   Workspace   @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, workspaceId])
+  @@index([workspaceId])
+  @@index([userId])
+}
+
+// Prompt model
+model Prompt {
+  id          String               @id @default(cuid())
+  workspaceId String
+  name        String
+  description String?
+  json        Json
+  toon        String               @db.Text
+  tags        String[]
+  createdBy   String
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+  workspace   Workspace            @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  creator     User                 @relation("PromptCreator", fields: [createdBy], references: [id], onDelete: Cascade)
+  versions    PromptVersion[]
+  shares      PublicPromptShare[]
+
+  @@index([workspaceId])
+  @@index([createdBy])
+  @@index([tags])
+}
+
+// Prompt version history
+model PromptVersion {
+  id        String   @id @default(cuid())
+  promptId  String
+  version   Int
+  json      Json
+  toon      String   @db.Text
+  createdBy String
+  createdAt DateTime @default(now())
+  prompt    Prompt   @relation(fields: [promptId], references: [id], onDelete: Cascade)
+  creator   User     @relation(fields: [createdBy], references: [id], onDelete: Cascade)
+
+  @@unique([promptId, version])
+  @@index([promptId])
+  @@index([createdBy])
+}
+
+// Public share links
+model PublicPromptShare {
+  id        String   @id @default(cuid())
+  promptId  String
+  slug      String   @unique
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  expiresAt DateTime?
+  prompt    Prompt   @relation(fields: [promptId], references: [id], onDelete: Cascade)
+
+  @@index([promptId])
+  @@index([slug])
+}
+
+// Stripe customer
+model StripeCustomer {
+  id               String   @id @default(cuid())
+  userId           String   @unique
+  stripeCustomerId String   @unique
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([stripeCustomerId])
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELED
+  INCOMPLETE
+  INCOMPLETE_EXPIRED
+  PAST_DUE
+  TRIALING
+  UNPAID
+}
+
+// Subscription model
+model Subscription {
+  id                   String             @id @default(cuid())
+  workspaceId          String             @unique
+  stripeSubscriptionId String             @unique
+  plan                 WorkspacePlan
+  status               SubscriptionStatus
+  currentPeriodStart   DateTime
+  currentPeriodEnd     DateTime
+  cancelAtPeriodEnd    Boolean            @default(false)
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+  workspace            Workspace          @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId])
+  @@index([stripeSubscriptionId])
+}
+
+enum AuditAction {
+  PROMPT_CREATED
+  PROMPT_UPDATED
+  PROMPT_DELETED
+  PROMPT_SHARED
+  WORKSPACE_CREATED
+  WORKSPACE_UPDATED
+  WORKSPACE_MEMBER_ADDED
+  WORKSPACE_MEMBER_REMOVED
+  WORKSPACE_MEMBER_ROLE_CHANGED
+  PLAN_CHANGED
+  PLAN_UPGRADED
+  PLAN_DOWNGRADED
+  USER_INVITED
+  USER_JOINED
+}
+
+// Audit log
+model AuditLog {
+  id          String      @id @default(cuid())
+  workspaceId String
+  userId      String
+  action      AuditAction
+  metadata    Json?
+  ipAddress   String?
+  userAgent   String?
+  createdAt   DateTime    @default(now())
+  workspace   Workspace   @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId])
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+}
