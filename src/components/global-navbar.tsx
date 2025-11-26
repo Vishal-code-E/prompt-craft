@@ -32,6 +32,8 @@ export default function GlobalNavbar() {
     { name: "Home", link: "/#home" },
     { name: "About", link: "/about" },
     { name: "Products", link: "/products" },
+    { name: "Playground", link: "/playground" },
+    { name: "Library", link: "/library" },
     { name: "Docs", link: "/docs" },
     { name: "Pricing", link: "/pricing" },
     { name: "Contact", link: "/contact" },

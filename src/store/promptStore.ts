@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { JSONOutput } from '@/utils/buildJSON';
+import { PromptMetadata } from '@/lib/localDb';
 
 export interface PromptState {
     mainTask: string;
@@ -24,6 +25,13 @@ export interface PromptState {
     generatedTOON: string | null;
     isGenerating: boolean;
     generationError: string | null;
+    // Library state
+    currentPromptId: string | null;
+    currentPromptName: string | null;
+    isSaved: boolean;
+    // TOON editing state
+    toonSource: string; // Raw TOON text being edited
+    toonParseError: string | null;
 }
 
 interface PromptActions {
@@ -46,6 +54,15 @@ interface PromptActions {
     setIsGenerating: (loading: boolean) => void;
     setGenerationError: (error: string | null) => void;
     resetGeneration: () => void;
+    // Library actions
+    loadPrompt: (prompt: PromptMetadata) => void;
+    saveCurrentPrompt: () => Promise<void>;
+    clearCurrentPrompt: () => void;
+    setIsSaved: (saved: boolean) => void;
+    // TOON editing actions
+    setToonSource: (toon: string) => void;
+    parseToonSource: () => void;
+    setToonParseError: (error: string | null) => void;
 }
 
 type PromptStore = PromptState & PromptActions;
@@ -74,6 +91,13 @@ export const usePromptStore = create<PromptStore>((set) => ({
     generatedTOON: null,
     isGenerating: false,
     generationError: null,
+    // Library state
+    currentPromptId: null,
+    currentPromptName: null,
+    isSaved: false,
+    // TOON editing state
+    toonSource: '',
+    toonParseError: null,
 
     // Actions
     setMainTask: (task) => set({ mainTask: task }),
@@ -158,4 +182,59 @@ export const usePromptStore = create<PromptStore>((set) => ({
         isGenerating: false,
         generationError: null,
     }),
+
+    // Library actions
+    loadPrompt: (prompt: PromptMetadata) => {
+        const json = prompt.json as JSONOutput;
+        set({
+            currentPromptId: prompt.id,
+            currentPromptName: prompt.name,
+            isSaved: true,
+            mainTask: json.task || '',
+            rules: json.rules || [],
+            story: {
+                genre: json.storyConfig?.genre || 'fantasy',
+                plot: json.storyConfig?.plot || '',
+                specifics: json.storyConfig?.specifics || [],
+            },
+            moderation: {
+                vulgar: json.moderation?.allowVulgar || false,
+                cussing: json.moderation?.allowCussing || false,
+            },
+            limits: {
+                minWords: json.limits?.minWords || 75,
+                maxWords: json.limits?.maxWords || 125,
+                chapters: json.limits?.maxChapters || 1,
+                uniqueness: json.limits?.uniqueness || 100,
+            },
+            generatedJSON: json,
+            toonSource: prompt.toon,
+        });
+    },
+
+    saveCurrentPrompt: async () => {
+        // This will be called from components with full save logic
+        set({ isSaved: true });
+    },
+
+    clearCurrentPrompt: () => set({
+        currentPromptId: null,
+        currentPromptName: null,
+        isSaved: false,
+    }),
+
+    setIsSaved: (saved) => set({ isSaved: saved }),
+
+    // TOON editing actions
+    setToonSource: (toon: string) => set({ 
+        toonSource: toon,
+        isSaved: false,
+    }),
+
+    parseToonSource: () => {
+        // This will be implemented with full TOON parsing logic in components
+        set({ toonParseError: null });
+    },
+
+    setToonParseError: (error: string | null) => set({ toonParseError: error }),
 }));

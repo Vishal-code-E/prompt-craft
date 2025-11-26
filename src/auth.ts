@@ -74,7 +74,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     async session({ session, token }) {
       if (session.user && token.sub) {
-        // @ts-expect-error - Adding custom id field to session.user
         session.user.id = token.sub;
       }
       return session;
