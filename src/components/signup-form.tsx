@@ -28,7 +28,7 @@ export default function SignupForm({ onClose }: SignupFormProps) {
   }
 
   return (
-    <div className="w-full max-w-md mx-auto rounded-2xl border border-gray-200 bg-white p-6 shadow-lg relative z-[101]">
+    <div className="w-full max-w-md mx-auto rounded-2xl border border-gray-200 bg-white p-6 shadow-lg relative z-101">
       {/* Close Button if passed */}
       {onClose && (
         <button

@@ -100,7 +100,7 @@ export default function ContactPage() {
   return (
     <div className="flex flex-col min-h-screen bg-white text-black">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-gray-50 via-white to-gray-100 py-32 px-6 mt-20 min-h-[80vh] flex items-center justify-center">
+      <section className="relative overflow-hidden bg-linear-to-br from-gray-50 via-white to-gray-100 py-32 px-6 mt-20 min-h-[80vh] flex items-center justify-center">
         {/* Background Animation */}
         <div className="absolute inset-0 overflow-hidden opacity-5">
           <motion.div
@@ -142,7 +142,7 @@ export default function ContactPage() {
           >
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
               Let&apos;s Build Something{" "}
-              <span className="bg-gradient-to-r from-[#00FF88] via-green-500 to-[#00FF88] bg-clip-text text-transparent">
+              <span className="bg-linear-to-r from-[#00FF88] via-green-500 to-[#00FF88] bg-clip-text text-transparent">
                 Intelligent.
               </span>
             </h1>
@@ -382,7 +382,7 @@ export default function ContactPage() {
       </section>
 
       {/* Final CTA Section */}
-      <section className="relative py-20 px-6 bg-gradient-to-br from-gray-900 to-black text-white overflow-hidden">
+      <section className="relative py-20 px-6 bg-linear-to-br from-gray-900 to-black text-white overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <motion.div
             animate={{ 

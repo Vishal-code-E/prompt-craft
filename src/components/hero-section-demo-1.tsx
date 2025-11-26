@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion"
 import Link from "next/link"
+import Image from "next/image"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { useSession, signOut } from "next-auth/react"
 
@@ -26,11 +27,11 @@ const HeroSection = () => {
           backgroundSize: "40px 40px",
         }}
       />
-
       {/* Main Content Container */}
       <div className="relative z-10 w-full px-6 flex justify-between items-center gap-12">
         {/* Content Block (aligned to extreme left) */}
-        <div className="text-left pl-12 flex-shrink-0">
+        <div className="text-left pl-12 shrink-0">
+          {/* Heading */}
           {/* Heading */}
           <motion.h1
             className="text-3xl md:text-5xl font-serif font-bold leading-snug tracking-tight"
@@ -78,7 +79,7 @@ const HeroSection = () => {
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-3 px-6 py-3 bg-white border border-gray-200 rounded-full shadow-sm">
                   {session.user?.image && (
-                    <img src={session.user.image} alt="Profile" className="w-8 h-8 rounded-full" />
+                    <Image src={session.user.image} alt="Profile" width={32} height={32} className="w-8 h-8 rounded-full" />
                   )}
                   <div>
                     <p className="text-sm font-medium text-gray-900">
@@ -96,10 +97,9 @@ const HeroSection = () => {
             )}
           </motion.div>
         </div>
-
         {/* Card Placeholder on the Right */}
         <motion.div
-          className="flex-shrink-0 hidden lg:block mr-40"
+          className="shrink-0 hidden lg:block mr-40"
           initial={{ opacity: 0, x: 40 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
