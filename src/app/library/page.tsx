@@ -11,15 +11,7 @@ import { VersionHistoryModal } from '@/components/VersionHistoryModal';
 import { usePromptStore } from '@/store/promptStore';
 import { Library, Search, Plus, AlertCircle } from 'lucide-react';
 import { useWorkspace } from '@/contexts/WorkspaceContext';
-
-interface PromptMetadata {
-  id: string;
-  name: string;
-  description: string;
-  tags: string[];
-  createdAt: number;
-  updatedAt: number;
-}
+import type { PromptMetadata } from '@/lib/localDb';
 
 export default function LibraryPage() {
   const router = useRouter();
@@ -48,7 +40,7 @@ export default function LibraryPage() {
     if (searchQuery.trim()) {
       const filtered = prompts.filter((p) =>
         p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        p.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (p.description?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
         p.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()))
       );
       setFilteredPrompts(filtered);
@@ -67,11 +59,13 @@ export default function LibraryPage() {
       if (!response.ok) throw new Error('Failed to load prompts');
       
       const data = await response.json();
-      const formattedPrompts = data.prompts.map((p: any) => ({
+      const formattedPrompts: PromptMetadata[] = data.prompts.map((p: { id: string; name: string; description: string; tags: string[]; content: Record<string, unknown>; createdAt: string; updatedAt: string }) => ({
         id: p.id,
         name: p.name,
         description: p.description || '',
         tags: p.tags || [],
+        json: p.content || {},
+        toon: '',
         createdAt: new Date(p.createdAt).getTime(),
         updatedAt: new Date(p.updatedAt).getTime(),
       }));

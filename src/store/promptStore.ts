@@ -185,7 +185,7 @@ export const usePromptStore = create<PromptStore>((set) => ({
 
     // Library actions
     loadPrompt: (prompt: PromptMetadata) => {
-        const json = prompt.json as JSONOutput;
+        const json = prompt.json as unknown as JSONOutput;
         set({
             currentPromptId: prompt.id,
             currentPromptName: prompt.name,

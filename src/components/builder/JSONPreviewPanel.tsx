@@ -73,7 +73,7 @@ export function JSONPreviewPanel() {
     const handleSave = async () => {
         setSaving(true);
         try {
-            const jsonObj = displayJSON as Record<string, unknown>;
+            const jsonObj = displayJSON as unknown as Record<string, unknown>;
             const toonText = generatedTOON || autoTOON;
             const tags = promptTags.split(',').map(t => t.trim()).filter(Boolean);
 

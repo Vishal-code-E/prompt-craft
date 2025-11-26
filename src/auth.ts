@@ -58,8 +58,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           select: { defaultWorkspaceId: true },
         });
         
-        if (dbUser?.defaultWorkspaceId) {
-          session.user.defaultWorkspaceId = dbUser.defaultWorkspaceId;
+        if (dbUser?.defaultWorkspaceId && session.user) {
+          (session.user as { defaultWorkspaceId?: string }).defaultWorkspaceId = dbUser.defaultWorkspaceId;
         }
       }
       return session;

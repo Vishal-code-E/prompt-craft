@@ -8,7 +8,7 @@ export default function AboutPage() {
   return (
     <div className="flex flex-col min-h-screen bg-white text-black">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-gray-50 via-white to-gray-100 py-20 px-6">
+      <section className="relative overflow-hidden bg-linear-to-br from-gray-50 via-white to-gray-100 py-20 px-6">
         {/* Background Animation */}
         <div className="absolute inset-0 overflow-hidden opacity-5">
           <motion.div
@@ -50,7 +50,7 @@ export default function AboutPage() {
           >
             <h1 className="text-5xl md:text-7xl font-bold mb-6">
               We&apos;re building the{" "}
-              <span className="bg-gradient-to-r from-black via-gray-700 to-black bg-clip-text text-transparent">
+              <span className="bg-linear-to-r from-black via-gray-700 to-black bg-clip-text text-transparent">
                 future
               </span>{" "}
               of AI prompt engineering.
@@ -207,7 +207,7 @@ export default function AboutPage() {
       </section>
 
       {/* Final CTA Section */}
-      <section className="relative py-20 px-6 bg-gradient-to-br from-gray-900 to-black text-white overflow-hidden">
+      <section className="relative py-20 px-6 bg-linear-to-br from-gray-900 to-black text-white overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <motion.div
             animate={{ 

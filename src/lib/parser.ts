@@ -16,7 +16,7 @@ export function parseLLMResponse(response: string): IntermediateFormat {
         if (result.success) {
             return result.data;
         } else {
-            console.error('Validation errors:', (result.error as any).errors);
+            console.error('Validation errors:', result.error);
             // Return with defaults if validation fails
             return applyDefaults(parsed);
         }

@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json<ClassifyResponse>(
                 {
                     success: false,
-                    error: `Validation error: ${validation.error.errors.map(e => e.message).join(', ')}`,
+                    error: `Validation error: ${validation.error.message}`,
                 },
                 { status: 400 }
             );

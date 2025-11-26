@@ -1,6 +1,6 @@
 import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
-import { MemberRole, WorkspacePlan } from './types';
+import { MemberRole, WorkspacePlan } from '@prisma/client';
 
 export { MemberRole, WorkspacePlan };
 
