@@ -3,7 +3,7 @@ import "./globals.css";
 import Providers from "./providers";
 import { WorkspaceProvider } from "@/contexts/WorkspaceContext";
 
-import GlobalNavbar from "@/components/global-navbar";
+import ConditionalNavbar from "@/components/conditional-navbar";
 import Footer from "@/components/footer";
 import ClickSpark from "@/components/ClickSpark";
 
@@ -31,8 +31,8 @@ export default function RootLayout({
               easing="ease-out"
             >
               <div className="min-h-screen">
-                {/* ✅ Global Navbar across all pages */}
-                <GlobalNavbar />
+                {/* Conditional Navbar - hides on products page */}
+                <ConditionalNavbar />
 
                 <div className="relative z-10 flex flex-col min-h-screen">
                   <main className="grow">{children}</main>
