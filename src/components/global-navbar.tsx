@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSession, signIn } from "next-auth/react";
+import { AnimatePresence, motion } from "motion/react";
 
 import {
   Navbar,
@@ -17,7 +18,18 @@ import {
 
 export default function GlobalNavbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const { data: session } = useSession();
+
+  // Track scroll position
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 100);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // ✅ helper to gate actions behind login
   const handleProtectedAction = (callback: () => void) => {
@@ -42,23 +54,47 @@ export default function GlobalNavbar() {
   return (
     <Navbar>
       {/* Desktop Navbar */}
-      <NavBody>
-        <NavbarLogo />
+      <NavBody isScrolled={isScrolled}>
+        <AnimatePresence mode="wait">
+          {!isScrolled && (
+            <motion.div
+              key="logo"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+            >
+              <NavbarLogo />
+            </motion.div>
+          )}
+        </AnimatePresence>
         <NavItems
           items={navItems.map((item) => ({
             ...item,
             className: "font-bold",
           }))}
         />
-        <NavbarButton
-          onClick={() =>
-            handleProtectedAction(() => {
-              window.location.href = "/demo";
-            })
-          }
-        >
-          Book a Demo
-        </NavbarButton>
+        <AnimatePresence mode="wait">
+          {!isScrolled && (
+            <motion.div
+              key="button"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+            >
+              <NavbarButton
+                onClick={() =>
+                  handleProtectedAction(() => {
+                    window.location.href = "/demo";
+                  })
+                }
+              >
+                Book a Demo
+              </NavbarButton>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </NavBody>
 
       {/* Mobile Navbar */}
