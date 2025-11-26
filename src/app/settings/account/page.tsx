@@ -2,17 +2,25 @@
 
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
 export default function AccountSettings() {
-  const { data: session, update } = useSession();
+  const { data: session, update, status } = useSession();
+  const router = useRouter();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
+
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.push('/signup');
+    }
+  }, [status, router]);
 
   useEffect(() => {
     if (session?.user) {
@@ -20,6 +28,16 @@ export default function AccountSettings() {
       setEmail(session.user.email || '');
     }
   }, [session]);
+
+  if (status === 'loading') {
+    return (
+      <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto">
+          <Card className="p-6 text-center">Loading...</Card>
+        </div>
+      </div>
+    );
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

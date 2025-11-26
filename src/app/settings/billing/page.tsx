@@ -1,8 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { useWorkspace } from '@/contexts/WorkspaceContext';
 
 interface Subscription {
   plan: string;
@@ -12,18 +15,29 @@ interface Subscription {
 }
 
 export default function BillingSettings() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const { currentWorkspace, isLoading: workspaceLoading } = useWorkspace();
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [loading, setLoading] = useState(true);
-  const [workspaceId, setWorkspaceId] = useState('');
 
   useEffect(() => {
-    fetchSubscription();
-  }, []);
+    if (status === 'unauthenticated') {
+      router.push('/signup');
+    }
+  }, [status, router]);
+
+  useEffect(() => {
+    if (currentWorkspace) {
+      fetchSubscription();
+    }
+  }, [currentWorkspace]);
 
   const fetchSubscription = async () => {
+    if (!currentWorkspace) return;
+    
     try {
-      // TODO: Get current workspace ID from session or context
-      const response = await fetch(`/api/billing/subscription?workspaceId=${workspaceId}`);
+      const response = await fetch(`/api/billing/subscription?workspaceId=${currentWorkspace.id}`);
       if (response.ok) {
         const data = await response.json();
         setSubscription(data.subscription);
@@ -36,11 +50,13 @@ export default function BillingSettings() {
   };
 
   const handleUpgrade = async (plan: 'PRO' | 'TEAM') => {
+    if (!currentWorkspace) return;
+    
     try {
       const response = await fetch('/api/billing/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ workspaceId, plan }),
+        body: JSON.stringify({ workspaceId: currentWorkspace.id, plan }),
       });
 
       const data = await response.json();

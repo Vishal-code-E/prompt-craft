@@ -1,7 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import { Card } from '@/components/ui/card';
+import { useWorkspace } from '@/contexts/WorkspaceContext';
 
 interface AuditLog {
   id: string;
@@ -15,20 +18,32 @@ interface AuditLog {
 }
 
 export default function ActivitySettings() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const { currentWorkspace, isLoading: workspaceLoading } = useWorkspace();
   const [logs, setLogs] = useState<AuditLog[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [workspaceId] = useState(''); // TODO: Get from context
 
   useEffect(() => {
-    fetchLogs();
-  }, [page]);
+    if (status === 'unauthenticated') {
+      router.push('/signup');
+    }
+  }, [status, router]);
+
+  useEffect(() => {
+    if (currentWorkspace) {
+      fetchLogs();
+    }
+  }, [currentWorkspace, page]);
 
   const fetchLogs = async () => {
+    if (!currentWorkspace) return;
+    
     try {
       const response = await fetch(
-        `/api/audit?workspaceId=${workspaceId}&page=${page}&pageSize=20`
+        `/api/audit?workspaceId=${currentWorkspace.id}&page=${page}&pageSize=20`
       );
       if (response.ok) {
         const data = await response.json();

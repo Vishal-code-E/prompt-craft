@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Providers from "./providers";
+import { WorkspaceProvider } from "@/contexts/WorkspaceContext";
 
 import GlobalNavbar from "@/components/global-navbar";
 import Footer from "@/components/footer";
@@ -20,24 +21,26 @@ export default function RootLayout({
     <html lang="en">
       <body className="bg-white text-black antialiased" suppressHydrationWarning={true}>
         <Providers>
-          <ClickSpark
-            sparkColor="#00FF88"
-            sparkSize={12}
-            sparkRadius={20}
-            sparkCount={10}
-            duration={500}
-            easing="ease-out"
-          >
-            <div className="min-h-screen">
-              {/* ✅ Global Navbar across all pages */}
-              <GlobalNavbar />
+          <WorkspaceProvider>
+            <ClickSpark
+              sparkColor="#00FF88"
+              sparkSize={12}
+              sparkRadius={20}
+              sparkCount={10}
+              duration={500}
+              easing="ease-out"
+            >
+              <div className="min-h-screen">
+                {/* ✅ Global Navbar across all pages */}
+                <GlobalNavbar />
 
-              <div className="relative z-10 flex flex-col min-h-screen">
-                <main className="flex-grow">{children}</main>
-                <Footer />
+                <div className="relative z-10 flex flex-col min-h-screen">
+                  <main className="grow">{children}</main>
+                  <Footer />
+                </div>
               </div>
-            </div>
-          </ClickSpark>
+            </ClickSpark>
+          </WorkspaceProvider>
         </Providers>
       </body>
     </html>

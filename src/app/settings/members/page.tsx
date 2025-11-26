@@ -1,9 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useWorkspace } from '@/contexts/WorkspaceContext';
 
 interface Member {
   id: string;
@@ -18,19 +21,30 @@ interface Member {
 }
 
 export default function MembersSettings() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const { currentWorkspace, isLoading: workspaceLoading } = useWorkspace();
   const [members, setMembers] = useState<Member[]>([]);
   const [loading, setLoading] = useState(true);
   const [inviteEmail, setInviteEmail] = useState('');
-  const [workspaceId, setWorkspaceId] = useState('');
 
   useEffect(() => {
-    fetchMembers();
-  }, []);
+    if (status === 'unauthenticated') {
+      router.push('/signup');
+    }
+  }, [status, router]);
+
+  useEffect(() => {
+    if (currentWorkspace) {
+      fetchMembers();
+    }
+  }, [currentWorkspace]);
 
   const fetchMembers = async () => {
+    if (!currentWorkspace) return;
+    
     try {
-      // TODO: Get workspace ID from context
-      const response = await fetch(`/api/workspaces/${workspaceId}/members`);
+      const response = await fetch(`/api/workspaces/${currentWorkspace.id}/members`);
       if (response.ok) {
         const data = await response.json();
         setMembers(data.members);
@@ -44,8 +58,10 @@ export default function MembersSettings() {
 
   const handleInvite = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!currentWorkspace) return;
+    
     try {
-      const response = await fetch(`/api/workspaces/${workspaceId}/members`, {
+      const response = await fetch(`/api/workspaces/${currentWorkspace.id}/members`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: inviteEmail, role: 'MEMBER' }),
@@ -62,9 +78,10 @@ export default function MembersSettings() {
 
   const handleRemove = async (memberId: string) => {
     if (!confirm('Are you sure you want to remove this member?')) return;
+    if (!currentWorkspace) return;
 
     try {
-      const response = await fetch(`/api/workspaces/${workspaceId}/members`, {
+      const response = await fetch(`/api/workspaces/${currentWorkspace.id}/members`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ memberId }),
