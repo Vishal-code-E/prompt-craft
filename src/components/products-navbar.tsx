@@ -77,7 +77,7 @@ export default function ProductsNavbar() {
         />
         
         <div className="flex items-center gap-3">
-          {/* Workspace Switcher - Only in Products */}
+          
           {session && currentWorkspace && (
             <div className="relative">
               <button

@@ -96,7 +96,7 @@ const HeroSection = () => {
             )}
           </motion.div>
         </div>
-        {/* Card Placeholder on the Right */}
+        
         <motion.div
           className="shrink-0 hidden lg:block mr-40"
           initial={{ opacity: 0, x: 40 }}
