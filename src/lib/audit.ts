@@ -32,7 +32,7 @@ export async function createAuditLog(data: AuditLogData): Promise<void> {
       },
     });
   } catch (error) {
-    // Log error but don't throw to prevent audit logs from breaking main flow
+    
     console.error('Failed to create audit log:', error);
   }
 }
