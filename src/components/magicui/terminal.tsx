@@ -230,7 +230,7 @@ export const Terminal = ({
       ref={containerRef}
       className={cn(
         "z-0 h-full max-h-[400px] w-full max-w-lg rounded-xl border border-border bg-background",
-        "ml-auto mr-7", // Added margin to move right
+        "ml-auto mr-7", 
         className,
       )}
     >
