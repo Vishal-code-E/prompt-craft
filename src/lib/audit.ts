@@ -37,9 +37,7 @@ export async function createAuditLog(data: AuditLogData): Promise<void> {
   }
 }
 
-/**
- * Get audit logs for a workspace with pagination
- */
+
 export async function getWorkspaceAuditLogs(
   workspaceId: string,
   page: number = 1,
