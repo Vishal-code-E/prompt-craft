@@ -31,8 +31,7 @@ const HeroSection = () => {
       <div className="relative z-10 w-full px-6 flex justify-between items-center gap-12">
         {/* Content Block (aligned to extreme left) */}
         <div className="text-left pl-12 shrink-0">
-          {/* Heading */}
-          {/* Heading */}
+          
           <motion.h1
             className="text-3xl md:text-5xl font-serif font-bold leading-snug tracking-tight"
             initial={{ opacity: 0, y: -40 }}
@@ -123,7 +122,7 @@ const HeroSection = () => {
                   </code>
                 </div>
                 <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                  <p className="text-sm text-gray-700 mb-2">Latest Prompt:</p>
+                  <p className="text-sm text-gray-700 mb-2">Latest Promps:</p>
                   <div className="bg-white p-3 rounded border border-gray-100">
                     <p className="text-xs text-gray-600 font-mono">
                       &#123; &quot;version&quot;: &quot;1.0.0&quot;,<br />
