@@ -31,14 +31,14 @@ export function JSONPreviewPanel() {
 
     const { generatedJSON, generatedTOON, currentPromptId, currentPromptName, isSaved, setIsSaved } = state;
 
-    // Build current JSON from store state
+    //1.  Build current JSON from store state
     const currentJSON = buildJSON(state);
 
-    // Use generated JSON if available, otherwise use current state
+    //2. Use generated JSON if available, otherwise use current state
     const displayJSON = generatedJSON || currentJSON;
     const jsonString = JSON.stringify(displayJSON, null, 2);
 
-    // Auto-generate TOON from JSON
+    //3. Auto-generate TOON from JSON
     const [autoTOON, setAutoTOON] = useState('');
 
     useEffect(() => {
