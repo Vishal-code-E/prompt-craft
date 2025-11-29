@@ -21,7 +21,7 @@ export default function SignupForm({ onClose }: SignupFormProps) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
-    // 👉 step 4 will wire this to your API / DB
+    
     console.log("signup payload:", form);
     setLoading(false);
     if (onClose) onClose(); 
