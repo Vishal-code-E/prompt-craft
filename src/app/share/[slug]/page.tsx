@@ -11,7 +11,7 @@ export default async function SharePage({
 }) {
   const { slug } = await params;
 
-  // Get share with prompt
+
   const share = await prisma.publicPromptShare.findUnique({
     where: { slug },
     include: {

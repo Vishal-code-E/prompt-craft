@@ -12,16 +12,16 @@ import { TextGenerateEffect } from "@/components/ui/text-generate-effect";
 
 
 
-// ✅ NEW IMPORTS
+
 import { useSession, signIn } from "next-auth/react";
 
 export default function Home() {
   const [isOpen, setIsOpen] = useState(false);
 
-  // ✅ get current session
+
   const { data: session } = useSession();
 
-  // ✅ helper to gate actions behind login
+
   const handleProtectedAction = (callback: () => void) => {
     if (!session) {
       signIn("google"); // open Google login if not signed in
@@ -70,7 +70,7 @@ export default function Home() {
           <h3 className="text-2xl md:text-3xl font-bold mb-4">
             Why <span className="text-[#00FF88] drop-shadow-[1px_1px_2px_rgba(0,0,0,0.6)]">PromptCraft</span>?
           </h3>
-          <TextGenerateEffect 
+          <TextGenerateEffect
             words="Build, test, and export structured prompts for your apps and workflows. Fast. Flexible."
             className="text-lg md:text-xl text-gray-700"
             duration={0.8}

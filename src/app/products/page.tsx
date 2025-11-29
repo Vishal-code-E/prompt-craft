@@ -65,15 +65,15 @@ export default function BuilderPage() {
                                             Story
                                         </TabsTrigger>
                                     </TabsList>
-                                    
+
                                     <TabsContent value="finetune" className="space-y-4">
                                         <FineTuneSection />
                                     </TabsContent>
-                                    
+
                                     <TabsContent value="rules" className="space-y-4">
                                         <RulesSection />
                                     </TabsContent>
-                                    
+
                                     <TabsContent value="story" className="space-y-4">
                                         <StoryConfigSection />
                                     </TabsContent>
@@ -97,9 +97,9 @@ export default function BuilderPage() {
                                     </h3>
                                     <ModerationToggles />
                                 </div>
-                                
+
                                 <Separator className="my-6" />
-                                
+
                                 <div>
                                     <h3 className="text-sm font-semibold mb-4 flex items-center gap-2">
                                         <Sliders className="w-4 h-4 text-[#00FF88]" />
