@@ -124,3 +124,4 @@ export function NumericControls() {
         </div>
     );
 }
+/* Numeric controls*/
