@@ -24,7 +24,7 @@ export default function SignupForm({ onClose }: SignupFormProps) {
     // 👉 step 4 will wire this to your API / DB
     console.log("signup payload:", form);
     setLoading(false);
-    if (onClose) onClose(); // close modal after signup
+    if (onClose) onClose(); 
   }
 
   return (
