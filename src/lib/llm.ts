@@ -188,20 +188,42 @@ async function generateWithAnthropic(
     }
 }
 
-// Google Gemini implementation (placeholder)
+// Google Gemini implementation
 async function generateWithGoogle(
     input: string,
     model?: string,
     temperature?: number,
     maxTokens?: number
 ): Promise<string> {
-    // Placeholder for Google Gemini API
-    throw new Error('Google Gemini provider not yet implemented. Please use OpenAI or Anthropic, or implement this provider.');
+    const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
 
-    // TODO: Implement with @google/generative-ai package
-    // const apiKey = process.env.GOOGLE_API_KEY;
-    // if (!apiKey) throw new Error('GOOGLE_API_KEY not configured');
-    // ... implementation
+    if (!apiKey) {
+        throw new Error('GOOGLE_GENERATIVE_AI_API_KEY not configured. Please add it to your .env.local file.');
+    }
+
+    try {
+        const { GoogleGenerativeAI } = await import('@google/generative-ai');
+        const genAI = new GoogleGenerativeAI(apiKey);
+
+        const geminiModel = genAI.getGenerativeModel({
+            model: model || 'gemini-1.5-flash',
+            generationConfig: {
+                temperature: temperature ?? 0.3,
+                maxOutputTokens: maxTokens ?? 1000,
+                responseMimeType: 'application/json',
+            },
+        });
+
+        const prompt = `${SYSTEM_PROMPT}\n\nUser input: ${input}`;
+        const result = await geminiModel.generateContent(prompt);
+        const response = await result.response;
+        const text = response.text();
+
+        return text || '{}';
+    } catch (error) {
+        console.error('Google Gemini API error:', error);
+        throw new Error(`Google Gemini API error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
 }
 
 // Cohere implementation (placeholder)
