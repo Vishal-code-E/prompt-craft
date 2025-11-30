@@ -66,6 +66,8 @@ model User {
   auditLogs          AuditLog[]
   stripeCustomer     StripeCustomer?
   defaultWorkspace   Workspace?          @relation("DefaultWorkspace", fields: [defaultWorkspaceId], references: [id], onDelete: SetNull)
+  comments             Comment[]             @relation("CommentAuthor")
+  collaborationHistory CollaborationHistory[] @relation("CollaborationHistoryUser")
 
   @@index([email])
   @@index([defaultWorkspaceId])
@@ -91,6 +93,7 @@ model Workspace {
   auditLogs           AuditLog[]
   subscription        Subscription?
   defaultForUsers     User[]              @relation("DefaultWorkspace")
+  comments            Comment[]
 
   @@index([ownerId])
 }
@@ -133,6 +136,9 @@ model Prompt {
   creator     User                 @relation("PromptCreator", fields: [createdBy], references: [id], onDelete: Cascade)
   versions    PromptVersion[]
   shares      PublicPromptShare[]
+  comments    Comment[]
+  collaborativeSession CollaborativeSession?
+  collaborationHistory CollaborationHistory[]
 
   @@index([workspaceId])
   @@index([createdBy])
@@ -225,6 +231,12 @@ enum AuditAction {
   PLAN_DOWNGRADED
   USER_INVITED
   USER_JOINED
+  COMMENT_ADDED
+  COMMENT_RESOLVED
+  COMMENT_DELETED
+  REALTIME_SESSION_JOINED
+  REALTIME_SESSION_LEFT
+  COLLABORATIVE_EDIT
 }
 
 // Audit log
@@ -243,5 +255,75 @@ model AuditLog {
   @@index([workspaceId])
   @@index([userId])
   @@index([action])
+  @@index([createdAt])
+}
+
+// ========================================
+// PHASE 5: REALTIME COLLABORATION MODELS
+// ========================================
+
+enum CommentLocationType {
+  JSON
+  TOON
+  RULE
+}
+
+// Inline comments on prompts
+model Comment {
+  id          String   @id @default(cuid())
+  workspaceId String
+  promptId    String
+  userId      String
+  body        String   @db.Text
+  location    Json     // { type: 'json' | 'toon' | 'rule', path?: string, line?: number, nodeId?: string }
+  resolved    Boolean  @default(false)
+  parentId    String?  // For threaded replies
+  mentions    String[] // User IDs mentioned
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  prompt      Prompt    @relation(fields: [promptId], references: [id], onDelete: Cascade)
+  user        User      @relation("CommentAuthor", fields: [userId], references: [id], onDelete: Cascade)
+  parent      Comment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies     Comment[] @relation("CommentReplies")
+
+  @@index([workspaceId])
+  @@index([promptId])
+  @@index([userId])
+  @@index([parentId])
+  @@index([resolved])
+  @@index([createdAt])
+}
+
+// CRDT state persistence for collaborative editing
+model CollaborativeSession {
+  id           String   @id @default(cuid())
+  promptId     String   @unique
+  ydocState    Bytes?   // Y.js document state
+  version      Int      @default(0)
+  lastSyncedAt DateTime @default(now())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  prompt       Prompt   @relation(fields: [promptId], references: [id], onDelete: Cascade)
+
+  @@index([lastSyncedAt])
+}
+
+// Track collaborative changes for merge history
+model CollaborationHistory {
+  id         String   @id @default(cuid())
+  promptId   String
+  userId     String
+  changeType String   // 'json_edit', 'toon_edit', 'rule_add', etc.
+  changePath String?  // JSON path or line number
+  oldValue   String?  @db.Text
+  newValue   String?  @db.Text
+  metadata   Json?    // Additional context
+  createdAt  DateTime @default(now())
+  prompt     Prompt   @relation(fields: [promptId], references: [id], onDelete: Cascade)
+  user       User     @relation("CollaborationHistoryUser", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([promptId])
+  @@index([userId])
   @@index([createdAt])
 }
