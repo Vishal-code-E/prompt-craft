@@ -5,8 +5,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/auth';
+import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
 
@@ -24,7 +23,7 @@ export async function PATCH(
     { params }: { params: { id: string } }
 ) {
     try {
-        const session = await getServerSession(authOptions);
+        const session = await auth();
         if (!session?.user?.id) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
@@ -54,7 +53,7 @@ export async function PATCH(
         // Check if user is the comment author or workspace admin
         const isAuthor = comment.userId === session.user.id;
         const isAdmin = comment.workspace.members.some(
-            (m) => m.userId === session.user.id && ['OWNER', 'ADMIN'].includes(m.role)
+            (m: any) => m.userId === session.user.id && ['OWNER', 'ADMIN'].includes(m.role)
         );
 
         if (!isAuthor && !isAdmin) {
@@ -97,7 +96,7 @@ export async function PATCH(
         console.error('Error updating comment:', error);
         if (error instanceof z.ZodError) {
             return NextResponse.json(
-                { error: 'Invalid request data', details: error.errors },
+                { error: 'Invalid request data', details: error.issues },
                 { status: 400 }
             );
         }
@@ -117,7 +116,7 @@ export async function DELETE(
     { params }: { params: { id: string } }
 ) {
     try {
-        const session = await getServerSession(authOptions);
+        const session = await auth();
         if (!session?.user?.id) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
@@ -145,7 +144,7 @@ export async function DELETE(
         // Check if user is the comment author or workspace admin
         const isAuthor = comment.userId === session.user.id;
         const isAdmin = comment.workspace.members.some(
-            (m) => m.userId === session.user.id && ['OWNER', 'ADMIN'].includes(m.role)
+            (m: any) => m.userId === session.user.id && ['OWNER', 'ADMIN'].includes(m.role)
         );
 
         if (!isAuthor && !isAdmin) {

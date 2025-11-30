@@ -235,6 +235,20 @@ export class CRDTProvider {
     }
 
     /**
+     * Get awareness map (for Monaco binding)
+     */
+    public getAwareness() {
+        return this.awareness;
+    }
+
+    /**
+     * Get current user ID
+     */
+    public getUserId() {
+        return this.options.userId;
+    }
+
+    /**
      * Add custom update handler
      */
     public onUpdate(handler: (update: Uint8Array, origin: any) => void) {

@@ -54,6 +54,7 @@ export function CollaborativeEditor({
                     cursor: {
                         line: e.position.lineNumber,
                         column: e.position.column,
+                        section,
                     },
                 });
             }
@@ -68,6 +69,7 @@ export function CollaborativeEditor({
                         startColumn: e.selection.startColumn,
                         endLine: e.selection.endLineNumber,
                         endColumn: e.selection.endColumn,
+                        section,
                     },
                 });
             }
@@ -90,7 +92,7 @@ export function CollaborativeEditor({
             yText,
             editorRef.current.getModel()!,
             new Set([editorRef.current]),
-            crdtProvider.awareness as any
+            crdtProvider.getAwareness() as any
         );
 
         bindingRef.current = binding;
@@ -131,7 +133,7 @@ export function CollaborativeEditor({
 
         // Create decorations for each remote cursor
         const newDecorations = awarenessStates
-            .filter((state) => state.cursor && state.user.id !== crdtProvider.options.userId)
+            .filter((state) => state.cursor && state.user.id !== crdtProvider.getUserId())
             .map((state) => {
                 const cursor = state.cursor!;
                 return {

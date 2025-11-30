@@ -209,15 +209,14 @@ export function RealtimeProvider({ children }: RealtimeProviderProps) {
                         userId,
                         user: {
                             id: userId,
-                            name: session.user.name,
-                            email: session.user.email!,
-                            image: session.user.image,
+                            name: session.user?.name || null,
+                            email: session.user?.email || '',
+                            image: session.user?.image || null,
                         },
                         status: 'active',
                         lastActivity: Date.now(),
                         color: userColor,
                     };
-
                     await channel.track(userPresence);
                     setCurrentUserPresence(userPresence);
                 }

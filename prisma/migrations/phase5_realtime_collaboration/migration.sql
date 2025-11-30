@@ -1,5 +1,4 @@
--- Phase 5: Realtime Collaboration Migration
--- Adds support for comments, presence, and realtime collaboration
+
 
 -- Comment table for inline commenting
 CREATE TABLE "Comment" (
