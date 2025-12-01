@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { createAuditLog, AuditAction } from '@/lib/audit';
 import { WorkspacePlan, SubscriptionStatus } from '@/lib/types';
+import { addCreditsToWorkspace } from '@/lib/usage';
 import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -41,9 +42,28 @@ export async function POST(request: NextRequest) {
     switch (event.type) {
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session;
-        const { workspaceId, userId, plan } = session.metadata || {};
+        const { workspaceId, userId, plan, type, credits } = session.metadata || {};
 
-        if (workspaceId && userId && plan && session.subscription) {
+        // Handle credit purchase
+        if (type === 'credit_purchase' && workspaceId && userId && credits) {
+          const creditAmount = parseInt(credits);
+          
+          await addCreditsToWorkspace(workspaceId, creditAmount);
+
+          // Audit log for credit purchase
+          await createAuditLog({
+            workspaceId,
+            userId,
+            action: AuditAction.CREDITS_PURCHASED,
+            metadata: {
+              credits: creditAmount,
+              amountPaid: session.amount_total ? session.amount_total / 100 : 0,
+              sessionId: session.id,
+            },
+          });
+        }
+        // Handle subscription checkout
+        else if (workspaceId && userId && plan && session.subscription) {
           // Get subscription details
           const subscription = await stripe.subscriptions.retrieve(
             session.subscription as string

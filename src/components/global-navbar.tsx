@@ -16,6 +16,7 @@ import {
   MobileNavToggle,
   MobileNavMenu,
 } from "@/components/resizable-navbar";
+import { CreditProgressBar } from "@/components/CreditProgressBar";
 
 export default function GlobalNavbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -91,24 +92,27 @@ export default function GlobalNavbar() {
         
         <div className="flex items-center gap-3">
           {/* User Menu */}
-          {session?.user && (
-            <div className="relative">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowUserMenu(!showUserMenu);
-                }}
-                className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                {session.user.image ? (
-                  <img src={session.user.image} alt="" className="w-6 h-6 rounded-full" />
-                ) : (
-                  <div className="w-6 h-6 rounded-full bg-[#00FF88] flex items-center justify-center text-xs font-bold">
-                    {session.user.name?.[0] || session.user.email?.[0]}
-                  </div>
-                )}
-                <ChevronDown className="w-4 h-4" />
-              </button>
+          {session && (
+            <>
+              <CreditProgressBar />
+              
+              <div className="relative">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowUserMenu(!showUserMenu);
+                  }}
+                  className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  {session.user.image ? (
+                    <img src={session.user.image} alt="" className="w-6 h-6 rounded-full" />
+                  ) : (
+                    <div className="w-6 h-6 rounded-full bg-[#00FF88] flex items-center justify-center text-xs font-bold">
+                      {session.user.name?.[0] || session.user.email?.[0]}
+                    </div>
+                  )}
+                  <ChevronDown className="w-4 h-4" />
+                </button>
               
               {showUserMenu && (
                 <div className="absolute top-full right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
