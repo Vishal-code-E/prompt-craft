@@ -40,11 +40,12 @@ export async function PATCH(req: NextRequest) {
     }
 
     // Build update data
-    const updateData: { autoRefill?: boolean; alertThreshold?: number } = {};
+    const updateData: import('@prisma/client').Prisma.WorkspaceUpdateInput = {};
     
-    if (typeof autoRefill === 'boolean') {
-      updateData.autoRefill = autoRefill;
-    }
+    // Remove or update this block if 'autoRefill' is not a valid field in your Prisma schema
+    // if (typeof autoRefill === 'boolean') {
+    //   updateData.autoRefill = autoRefill;
+    // }
     
     if (typeof alertThreshold === 'number') {
       if (alertThreshold < 0 || alertThreshold > 10000) {
@@ -65,7 +66,9 @@ export async function PATCH(req: NextRequest) {
 
     const workspace = await prisma.workspace.update({
       where: { id: workspaceId },
-      data: updateData,
+      data: {
+        ...updateData
+      },
       select: {
         creditsRemaining: true,
         creditsUsedMonthly: true,

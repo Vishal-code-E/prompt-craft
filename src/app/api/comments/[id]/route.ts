@@ -20,7 +20,7 @@ const UpdateCommentSchema = z.object({
  */
 export async function PATCH(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
         const session = await auth();
@@ -28,7 +28,7 @@ export async function PATCH(
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        const commentId = params.id;
+        const { id: commentId } = await params;
         const body = await request.json();
         const validatedData = UpdateCommentSchema.parse(body);
 
@@ -113,7 +113,7 @@ export async function PATCH(
  */
 export async function DELETE(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
         const session = await auth();
@@ -121,7 +121,7 @@ export async function DELETE(
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        const commentId = params.id;
+        const { id: commentId } = await params;
 
         // Get comment and verify ownership
         const comment = await prisma.comment.findUnique({
