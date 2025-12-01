@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma';
-import { UsageType } from '@prisma/client';
+import { UsageType, Prisma } from '@prisma/client';
 
 export function calculateCreditCost(
     inputTokens: number,
@@ -77,7 +77,7 @@ export async function logUsageAndDeductCredits(data: {
                 latencyMs: data.latencyMs,
                 success: data.success ?? true,
                 errorMessage: data.errorMessage,
-                metadata: data.metadata ? JSON.stringify(data.metadata) : undefined,
+                metadata: (data.metadata || {}) as Prisma.InputJsonValue,
             },
         });
 
