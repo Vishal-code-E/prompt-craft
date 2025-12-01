@@ -49,24 +49,24 @@ model VerificationToken {
 
 // User model
 model User {
-  id                 String              @id @default(cuid())
-  name               String?
-  email              String              @unique
-  emailVerified      DateTime?
-  image              String?
-  createdAt          DateTime            @default(now())
-  updatedAt          DateTime            @updatedAt
-  defaultWorkspaceId String?
-  accounts           Account[]
-  sessions           Session[]
-  workspaceMembers   WorkspaceMember[]
-  ownedWorkspaces    Workspace[]         @relation("WorkspaceOwner")
-  prompts            Prompt[]            @relation("PromptCreator")
-  promptVersions     PromptVersion[]
-  auditLogs          AuditLog[]
-  stripeCustomer     StripeCustomer?
-  defaultWorkspace   Workspace?          @relation("DefaultWorkspace", fields: [defaultWorkspaceId], references: [id], onDelete: SetNull)
-  comments             Comment[]             @relation("CommentAuthor")
+  id                   String                 @id @default(cuid())
+  name                 String?
+  email                String                 @unique
+  emailVerified        DateTime?
+  image                String?
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  defaultWorkspaceId   String?
+  accounts             Account[]
+  sessions             Session[]
+  workspaceMembers     WorkspaceMember[]
+  ownedWorkspaces      Workspace[]            @relation("WorkspaceOwner")
+  prompts              Prompt[]               @relation("PromptCreator")
+  promptVersions       PromptVersion[]
+  auditLogs            AuditLog[]
+  stripeCustomer       StripeCustomer?
+  defaultWorkspace     Workspace?             @relation("DefaultWorkspace", fields: [defaultWorkspaceId], references: [id], onDelete: SetNull)
+  comments             Comment[]              @relation("CommentAuthor")
   collaborationHistory CollaborationHistory[] @relation("CollaborationHistoryUser")
 
   @@index([email])
@@ -81,19 +81,27 @@ enum WorkspacePlan {
 
 // Workspace model
 model Workspace {
-  id                  String              @id @default(cuid())
-  name                String
-  ownerId             String
-  plan                WorkspacePlan       @default(FREE)
-  createdAt           DateTime            @default(now())
-  updatedAt           DateTime            @updatedAt
-  owner               User                @relation("WorkspaceOwner", fields: [ownerId], references: [id], onDelete: Cascade)
-  members             WorkspaceMember[]
-  prompts             Prompt[]
-  auditLogs           AuditLog[]
-  subscription        Subscription?
-  defaultForUsers     User[]              @relation("DefaultWorkspace")
-  comments            Comment[]
+  id                 String            @id @default(cuid())
+  name               String
+  ownerId            String
+  plan               WorkspacePlan     @default(FREE)
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+  // Phase 6: Credit system fields
+  creditsRemaining   Int               @default(1000) // Starting credits
+  creditsUsedMonthly Int               @default(0)
+  autoRefill         Boolean           @default(false)
+  alertThreshold     Int               @default(150) // Alert when 15% remaining (of 1000)
+  usageAlertSent     Boolean           @default(false)
+  lastCreditReset    DateTime          @default(now())
+  owner              User              @relation("WorkspaceOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  members            WorkspaceMember[]
+  prompts            Prompt[]
+  auditLogs          AuditLog[]
+  subscription       Subscription?
+  defaultForUsers    User[]            @relation("DefaultWorkspace")
+  comments           Comment[]
+  usageEvents        UsageEvent[]
 
   @@index([ownerId])
 }
@@ -107,13 +115,13 @@ enum MemberRole {
 
 // Workspace membership
 model WorkspaceMember {
-  id          String      @id @default(cuid())
+  id          String     @id @default(cuid())
   userId      String
   workspaceId String
   role        MemberRole
-  joinedAt    DateTime    @default(now())
-  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  workspace   Workspace   @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  joinedAt    DateTime   @default(now())
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace   Workspace  @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 
   @@unique([userId, workspaceId])
   @@index([workspaceId])
@@ -122,21 +130,21 @@ model WorkspaceMember {
 
 // Prompt model
 model Prompt {
-  id          String               @id @default(cuid())
-  workspaceId String
-  name        String
-  description String?
-  json        Json
-  toon        String               @db.Text
-  tags        String[]
-  createdBy   String
-  createdAt   DateTime             @default(now())
-  updatedAt   DateTime             @updatedAt
-  workspace   Workspace            @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  creator     User                 @relation("PromptCreator", fields: [createdBy], references: [id], onDelete: Cascade)
-  versions    PromptVersion[]
-  shares      PublicPromptShare[]
-  comments    Comment[]
+  id                   String                 @id @default(cuid())
+  workspaceId          String
+  name                 String
+  description          String?
+  json                 Json
+  toon                 String                 @db.Text
+  tags                 String[]
+  createdBy            String
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  workspace            Workspace              @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  creator              User                   @relation("PromptCreator", fields: [createdBy], references: [id], onDelete: Cascade)
+  versions             PromptVersion[]
+  shares               PublicPromptShare[]
+  comments             Comment[]
   collaborativeSession CollaborativeSession?
   collaborationHistory CollaborationHistory[]
 
@@ -164,13 +172,13 @@ model PromptVersion {
 
 // Public share links
 model PublicPromptShare {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   promptId  String
-  slug      String   @unique
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
+  slug      String    @unique
+  isActive  Boolean   @default(true)
+  createdAt DateTime  @default(now())
   expiresAt DateTime?
-  prompt    Prompt   @relation(fields: [promptId], references: [id], onDelete: Cascade)
+  prompt    Prompt    @relation(fields: [promptId], references: [id], onDelete: Cascade)
 
   @@index([promptId])
   @@index([slug])
@@ -237,6 +245,8 @@ enum AuditAction {
   REALTIME_SESSION_JOINED
   REALTIME_SESSION_LEFT
   COLLABORATIVE_EDIT
+  CREDITS_PURCHASED
+  CREDITS_DEPLETED
 }
 
 // Audit log
@@ -270,17 +280,17 @@ enum CommentLocationType {
 
 // Inline comments on prompts
 model Comment {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   workspaceId String
   promptId    String
   userId      String
-  body        String   @db.Text
-  location    Json     // { type: 'json' | 'toon' | 'rule', path?: string, line?: number, nodeId?: string }
-  resolved    Boolean  @default(false)
-  parentId    String?  // For threaded replies
+  body        String    @db.Text
+  location    Json // { type: 'json' | 'toon' | 'rule', path?: string, line?: number, nodeId?: string }
+  resolved    Boolean   @default(false)
+  parentId    String? // For threaded replies
   mentions    String[] // User IDs mentioned
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
   workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   prompt      Prompt    @relation(fields: [promptId], references: [id], onDelete: Cascade)
   user        User      @relation("CommentAuthor", fields: [userId], references: [id], onDelete: Cascade)
@@ -299,7 +309,7 @@ model Comment {
 model CollaborativeSession {
   id           String   @id @default(cuid())
   promptId     String   @unique
-  ydocState    Bytes?   // Y.js document state
+  ydocState    Bytes? // Y.js document state
   version      Int      @default(0)
   lastSyncedAt DateTime @default(now())
   createdAt    DateTime @default(now())
@@ -314,11 +324,11 @@ model CollaborationHistory {
   id         String   @id @default(cuid())
   promptId   String
   userId     String
-  changeType String   // 'json_edit', 'toon_edit', 'rule_add', etc.
-  changePath String?  // JSON path or line number
+  changeType String // 'json_edit', 'toon_edit', 'rule_add', etc.
+  changePath String? // JSON path or line number
   oldValue   String?  @db.Text
   newValue   String?  @db.Text
-  metadata   Json?    // Additional context
+  metadata   Json? // Additional context
   createdAt  DateTime @default(now())
   prompt     Prompt   @relation(fields: [promptId], references: [id], onDelete: Cascade)
   user       User     @relation("CollaborationHistoryUser", fields: [userId], references: [id], onDelete: Cascade)
@@ -326,4 +336,40 @@ model CollaborationHistory {
   @@index([promptId])
   @@index([userId])
   @@index([createdAt])
+}
+
+// ========================================
+// PHASE 6: USAGE ANALYTICS & CREDIT SYSTEM
+// ========================================
+
+enum UsageType {
+  LLM_GENERATION // Prompt generation via LLM
+  PROMPT_TEST // Testing prompt execution
+  API_CALL // API-based generation
+  EXPORT // Export operations
+  SHARE_GENERATION // Public share link generation
+  BATCH_OPERATION // Bulk operations
+}
+
+// Usage event tracking
+model UsageEvent {
+  id           String    @id @default(cuid())
+  workspaceId  String
+  userId       String
+  type         UsageType
+  inputTokens  Int       @default(0)
+  outputTokens Int       @default(0)
+  creditsUsed  Int // Calculated: inputTokens/1000 + outputTokens/500
+  latencyMs    Int? // Request latency
+  success      Boolean   @default(true)
+  errorMessage String?   @db.Text
+  metadata     Json? // Additional context (model, promptId, etc.)
+  createdAt    DateTime  @default(now())
+  workspace    Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId])
+  @@index([userId])
+  @@index([type])
+  @@index([createdAt])
+  @@index([workspaceId, createdAt])
 }
