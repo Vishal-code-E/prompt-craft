@@ -1,6 +1,8 @@
 import OpenAI from 'openai';
 import Anthropic from '@anthropic-ai/sdk';
 import { LLMProvider, LLMConfig } from '@/types/prompt';
+import { logUsageAndDeductCredits, checkCredits, calculateCreditCost } from '@/lib/usage';
+import { UsageType } from '@prisma/client';
 
 // System prompt for deterministic JSON extraction
 const SYSTEM_PROMPT = `You are a prompt structure analyzer. Your task is to convert natural language descriptions into a structured JSON format.
@@ -84,33 +86,106 @@ export function getProviderModels(provider: LLMProvider) {
     return LLM_PROVIDERS[provider]?.models || [];
 }
 
-// Main LLM inference function
+// Main LLM inference function with usage metering
 export async function generateStructure(
     input: string,
-    config: Partial<LLMConfig> = {}
+    config: Partial<LLMConfig> = {},
+    context?: { workspaceId?: string; userId?: string; promptId?: string }
 ): Promise<string> {
     const provider = config.provider || 'openai';
     const temperature = config.temperature ?? 0.3; // Low temperature for consistency
     const maxTokens = config.maxTokens ?? 1000;
 
-    switch (provider) {
-        case 'openai':
-            return generateWithOpenAI(input, config.model, temperature, maxTokens);
+    const startTime = Date.now();
+    let inputTokens = 0;
+    let outputTokens = 0;
+    let success = true;
+    let errorMessage: string | undefined;
 
-        case 'anthropic':
-            return generateWithAnthropic(input, config.model, temperature, maxTokens);
+    try {
+        // Estimate input tokens (rough: ~4 chars per token)
+        inputTokens = Math.ceil((input.length + SYSTEM_PROMPT.length) / 4);
 
-        case 'google':
-            return generateWithGoogle(input, config.model, temperature, maxTokens);
+        // Check credits if context provided
+        if (context?.workspaceId) {
+            const estimatedCredits = calculateCreditCost(inputTokens, maxTokens || 1000);
+            const hasCredits = await checkCredits(context.workspaceId, estimatedCredits);
+            
+            if (!hasCredits) {
+                throw new Error('Insufficient credits. Please purchase more credits to continue.');
+            }
+        }
 
-        case 'cohere':
-            return generateWithCohere(input, config.model, temperature, maxTokens);
+        let result: string;
+        switch (provider) {
+            case 'openai':
+                result = await generateWithOpenAI(input, config.model, temperature, maxTokens);
+                break;
+            case 'anthropic':
+                result = await generateWithAnthropic(input, config.model, temperature, maxTokens);
+                break;
+            case 'google':
+                result = await generateWithGoogle(input, config.model, temperature, maxTokens);
+                break;
+            case 'cohere':
+                result = await generateWithCohere(input, config.model, temperature, maxTokens);
+                break;
+            case 'local':
+                result = await generateWithLocal(input, config.model, temperature, maxTokens);
+                break;
+            default:
+                throw new Error(`Unsupported provider: ${provider}`);
+        }
 
-        case 'local':
-            return generateWithLocal(input, config.model, temperature, maxTokens);
+        // Estimate output tokens
+        outputTokens = Math.ceil(result.length / 4);
 
-        default:
-            throw new Error(`Unsupported provider: ${provider}`);
+        // Log usage and deduct credits
+        if (context?.workspaceId && context?.userId) {
+            await logUsageAndDeductCredits({
+                workspaceId: context.workspaceId,
+                userId: context.userId,
+                type: UsageType.LLM_GENERATION,
+                inputTokens,
+                outputTokens,
+                latencyMs: Date.now() - startTime,
+                success: true,
+                metadata: {
+                    provider,
+                    model: config.model || 'default',
+                    promptId: context.promptId,
+                },
+            });
+        }
+
+        return result;
+    } catch (error) {
+        success = false;
+        errorMessage = error instanceof Error ? error.message : 'Unknown error';
+
+        // Log failed attempt
+        if (context?.workspaceId && context?.userId) {
+            try {
+                await logUsageAndDeductCredits({
+                    workspaceId: context.workspaceId,
+                    userId: context.userId,
+                    type: UsageType.LLM_GENERATION,
+                    inputTokens,
+                    outputTokens: 0,
+                    latencyMs: Date.now() - startTime,
+                    success: false,
+                    errorMessage,
+                    metadata: {
+                        provider,
+                        model: config.model || 'default',
+                    },
+                });
+            } catch (logError) {
+                console.error('Failed to log error usage:', logError);
+            }
+        }
+
+        throw error;
     }
 }
 
