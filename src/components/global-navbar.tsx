@@ -136,7 +136,8 @@ export default function GlobalNavbar() {
                   </button>
                 </div>
               )}
-            </div>
+              </div>
+            </>
           )}
           
           <AnimatePresence mode="wait">

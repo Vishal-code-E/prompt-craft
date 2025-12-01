@@ -40,7 +40,7 @@ export async function PATCH(req: NextRequest) {
     }
 
     // Build update data
-    const updateData: any = {};
+    const updateData: { autoRefill?: boolean; alertThreshold?: number } = {};
     
     if (typeof autoRefill === 'boolean') {
       updateData.autoRefill = autoRefill;
@@ -78,10 +78,10 @@ export async function PATCH(req: NextRequest) {
       success: true,
       workspace,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error updating credit settings:', error);
     return NextResponse.json(
-      { error: 'Failed to update credit settings', details: error.message },
+      { error: 'Failed to update credit settings', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }

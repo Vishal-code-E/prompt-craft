@@ -6,6 +6,7 @@ import { WorkspaceProvider } from "@/contexts/WorkspaceContext";
 import ConditionalNavbar from "@/components/conditional-navbar";
 import Footer from "@/components/footer";
 import ClickSpark from "@/components/ClickSpark";
+import { LowCreditAlertBanner } from "@/components/LowCreditAlertBanner";
 
 export const metadata: Metadata = {
   title: "Prompt Craft",
@@ -31,6 +32,9 @@ export default function RootLayout({
               easing="ease-out"
             >
               <div className="min-h-screen">
+                {/* Low Credit Alert Banner */}
+                <LowCreditAlertBanner />
+                
                 {/* Conditional Navbar - hides on products page */}
                 <ConditionalNavbar />
 

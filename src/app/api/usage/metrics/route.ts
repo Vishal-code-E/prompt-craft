@@ -94,10 +94,10 @@ export async function GET(req: NextRequest) {
         endDate: new Date().toISOString(),
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error fetching usage metrics:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch usage metrics', details: error.message },
+      { error: 'Failed to fetch usage metrics', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }

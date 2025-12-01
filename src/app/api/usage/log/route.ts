@@ -75,10 +75,10 @@ export async function POST(req: NextRequest) {
         createdAt: usageEvent.createdAt,
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error logging usage:', error);
 
-    if (error.message === 'Insufficient credits') {
+    if (error instanceof Error && error.message === 'Insufficient credits') {
       return NextResponse.json(
         {
           error: 'Insufficient credits',
@@ -88,12 +88,12 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (error.message === 'Workspace not found') {
+    if (error instanceof Error && error.message === 'Workspace not found') {
       return NextResponse.json({ error: 'Workspace not found' }, { status: 404 });
     }
 
     return NextResponse.json(
-      { error: 'Failed to log usage', details: error.message },
+      { error: 'Failed to log usage', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }

@@ -52,7 +52,7 @@ export async function logUsageAndDeductCredits(data: {
   latencyMs?: number;
   success?: boolean;
   errorMessage?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }) {
   const creditsUsed = calculateCreditCost(data.inputTokens, data.outputTokens);
 

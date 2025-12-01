@@ -68,10 +68,10 @@ export async function GET(req: NextRequest) {
       isLowCredit,
       lastCreditReset: workspace.lastCreditReset,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error fetching credit summary:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch credit summary', details: error.message },
+      { error: 'Failed to fetch credit summary', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }

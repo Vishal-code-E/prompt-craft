@@ -7,12 +7,21 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Zap, Activity, TrendingUp, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 
+interface UsageEvent {
+  id: string;
+  type: string;
+  creditsUsed: number;
+  inputTokens: number;
+  outputTokens: number;
+  createdAt: string;
+}
+
 interface UsageStats {
   totalEvents: number;
   totalInputTokens: number;
   totalOutputTokens: number;
   totalCreditsUsed: number;
-  recentEvents: any[];
+  recentEvents: UsageEvent[];
 }
 
 interface WorkspaceInfo {
@@ -254,7 +263,7 @@ export default function UsagePage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {stats.recentEvents.map((event: any) => (
+              {stats.recentEvents.map((event: UsageEvent) => (
                 <div
                   key={event.id}
                   className="flex items-center justify-between py-2 border-b last:border-0"
