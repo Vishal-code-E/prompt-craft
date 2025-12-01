@@ -1,7 +1,6 @@
 import { prisma } from '@/lib/prisma';
-import { AuditAction } from './types';
+import { AuditAction, Prisma } from '@prisma/client';
 import { headers } from 'next/headers';
-import { Prisma } from '@prisma/client';
 
 export { AuditAction };
 
