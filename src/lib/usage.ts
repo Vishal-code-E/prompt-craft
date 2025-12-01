@@ -77,7 +77,7 @@ export async function logUsageAndDeductCredits(data: {
                 latencyMs: data.latencyMs,
                 success: data.success ?? true,
                 errorMessage: data.errorMessage,
-                metadata: data.metadata,
+                metadata: data.metadata ? JSON.stringify(data.metadata) : undefined,
             },
         });
 

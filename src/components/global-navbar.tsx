@@ -92,7 +92,7 @@ export default function GlobalNavbar() {
         
         <div className="flex items-center gap-3">
           {/* User Menu */}
-          {session && (
+          {session?.user && (
             <>
               <CreditProgressBar />
               
@@ -174,7 +174,7 @@ export default function GlobalNavbar() {
           />
         </MobileNavHeader>
 
-        <MobileNavMenu isOpen={isOpen} onClose={() => setIsOpen(false)}>
+        <MobileNavMenu isOpen={isOpen}>
           {navItems.map((item, idx) => (
             <a
               key={idx}

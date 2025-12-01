@@ -28,6 +28,7 @@ export async function PATCH(
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
+        const userId = session.user.id;
         const { id: commentId } = await params;
         const body = await request.json();
         const validatedData = UpdateCommentSchema.parse(body);
@@ -39,7 +40,7 @@ export async function PATCH(
                 workspace: {
                     include: {
                         members: {
-                            where: { userId: session.user.id },
+                            where: { userId },
                         },
                     },
                 },
@@ -47,13 +48,15 @@ export async function PATCH(
         });
 
         if (!comment) {
-            return NextResponse.json({ error: 'Comment not found' }, { status: 404 });
+            return NextResponse.json({ error: 'Comment not found' }, { status: 404 })
+;
         }
 
         // Check if user is the comment author or workspace admin
-        const isAuthor = comment.userId === session.user.id;
+        const isAuthor = comment.userId === userId;
+        type WorkspaceMember = { userId: string; role: string };
         const isAdmin = comment.workspace.members.some(
-            (m: any) => m.userId === session.user.id && ['OWNER', 'ADMIN'].includes(m.role)
+            (m: WorkspaceMember) => m.userId === userId && ['OWNER', 'ADMIN'].includes(m.role)
         );
 
         if (!isAuthor && !isAdmin) {
@@ -81,7 +84,7 @@ export async function PATCH(
             await prisma.auditLog.create({
                 data: {
                     workspaceId: comment.workspaceId,
-                    userId: session.user.id,
+                    userId,
                     action: validatedData.resolved ? 'COMMENT_RESOLVED' : 'COMMENT_ADDED',
                     metadata: {
                         commentId: comment.id,
@@ -121,6 +124,7 @@ export async function DELETE(
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
+        const userId = session.user.id;
         const { id: commentId } = await params;
 
         // Get comment and verify ownership
@@ -130,7 +134,7 @@ export async function DELETE(
                 workspace: {
                     include: {
                         members: {
-                            where: { userId: session.user.id },
+                            where: { userId },
                         },
                     },
                 },
@@ -142,9 +146,10 @@ export async function DELETE(
         }
 
         // Check if user is the comment author or workspace admin
-        const isAuthor = comment.userId === session.user.id;
+        const isAuthor = comment.userId === userId;
+        type WorkspaceMember = { userId: string; role: string };
         const isAdmin = comment.workspace.members.some(
-            (m: any) => m.userId === session.user.id && ['OWNER', 'ADMIN'].includes(m.role)
+            (m: WorkspaceMember) => m.userId === userId && ['OWNER', 'ADMIN'].includes(m.role)
         );
 
         if (!isAuthor && !isAdmin) {
@@ -160,7 +165,7 @@ export async function DELETE(
         await prisma.auditLog.create({
             data: {
                 workspaceId: comment.workspaceId,
-                userId: session.user.id,
+                userId,
                 action: 'COMMENT_DELETED',
                 metadata: {
                     commentId: comment.id,
