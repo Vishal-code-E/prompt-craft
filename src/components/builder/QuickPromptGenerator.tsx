@@ -39,7 +39,7 @@ export function QuickPromptGenerator() {
                 body: JSON.stringify({
                     input: quickInput,
                     provider: 'google',
-                    model: 'gemini-1.5-flash',
+                    model: 'gemini-1.5-flash-latest',
                 }),
             });
 

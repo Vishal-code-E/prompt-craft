@@ -63,8 +63,8 @@ const LLM_PROVIDERS = {
     },
     google: {
         name: 'Google',
-        models: ['gemini-pro', 'gemini-1.5-pro', 'gemini-1.5-flash'],
-        defaultModel: 'gemini-1.5-pro',
+        models: ['gemini-1.5-flash-latest', 'gemini-1.5-pro-latest', 'gemini-pro'],
+        defaultModel: 'gemini-1.5-flash-latest',
     },
     cohere: {
         name: 'Cohere',
@@ -281,7 +281,7 @@ async function generateWithGoogle(
         const genAI = new GoogleGenerativeAI(apiKey);
 
         const geminiModel = genAI.getGenerativeModel({
-            model: model || 'gemini-1.5-flash',
+            model: model || 'gemini-1.5-flash-latest',
             generationConfig: {
                 temperature: temperature ?? 0.3,
                 maxOutputTokens: maxTokens ?? 1000,
