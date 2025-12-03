@@ -99,7 +99,6 @@ export async function generateStructure(
     const startTime = Date.now();
     let inputTokens = 0;
     let outputTokens = 0;
-    let success = true;
     let errorMessage: string | undefined;
 
     try {
