@@ -1,6 +1,8 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import { PageHeader } from '@/components/builder/PageHeader';
 import { QuickPromptGenerator } from '@/components/builder/QuickPromptGenerator';
 import { FineTuneSection } from '@/components/builder/FineTuneSection';
@@ -13,11 +15,44 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Sparkles, Settings, Shield, FileText, Sliders } from 'lucide-react';
+import { Sparkles, Settings, Shield, FileText, Sliders, Loader2 } from 'lucide-react';
 
 export default function BuilderPage() {
+    const { data: session, status } = useSession();
+    const router = useRouter();
+    const [mounted, setMounted] = useState(false);
+
+    // Handle client-side mounting to prevent hydration issues
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    // Redirect to signup if not authenticated
+    useEffect(() => {
+        if (status === 'unauthenticated') {
+            router.push('/signup?callbackUrl=/products');
+        }
+    }, [status, router]);
+
+    // Show loading state while checking authentication
+    if (!mounted || status === 'loading') {
+        return (
+            <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-gray-50 flex items-center justify-center">
+                <div className="text-center space-y-4">
+                    <Loader2 className="w-12 h-12 animate-spin text-[#00FF88] mx-auto" />
+                    <p className="text-gray-600">Loading Prompt Builder...</p>
+                </div>
+            </div>
+        );
+    }
+
+    // Show nothing while redirecting
+    if (status === 'unauthenticated') {
+        return null;
+    }
+
     return (
-        <div className="min-h-screen bg-linear-to-br from-slate-50 via-white to-gray-50 pt-32">
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-gray-50 pt-32">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 <PageHeader />
 
@@ -30,7 +65,7 @@ export default function BuilderPage() {
                                 <div className="flex items-center gap-2">
                                     <Sparkles className="w-5 h-5 text-[#00FF88]" />
                                     <CardTitle className="text-xl">Quick Start</CardTitle>
-                                    <Badge variant="secondary" className="ml-auto">New</Badge>
+                                    <Badge variant="secondary" className="ml-auto">AI-Powered</Badge>
                                 </div>
                                 <CardDescription>
                                     Generate prompts quickly with AI assistance
@@ -48,6 +83,9 @@ export default function BuilderPage() {
                                     <Settings className="w-5 h-5 text-[#00FF88]" />
                                     <CardTitle className="text-xl">Configuration</CardTitle>
                                 </div>
+                                <CardDescription>
+                                    Fine-tune your prompt parameters
+                                </CardDescription>
                             </CardHeader>
                             <CardContent>
                                 <Tabs defaultValue="finetune" className="w-full">
@@ -66,15 +104,15 @@ export default function BuilderPage() {
                                         </TabsTrigger>
                                     </TabsList>
 
-                                    <TabsContent value="finetune" className="space-y-4">
+                                    <TabsContent value="finetune" className="space-y-4 mt-4">
                                         <FineTuneSection />
                                     </TabsContent>
 
-                                    <TabsContent value="rules" className="space-y-4">
+                                    <TabsContent value="rules" className="space-y-4 mt-4">
                                         <RulesSection />
                                     </TabsContent>
 
-                                    <TabsContent value="story" className="space-y-4">
+                                    <TabsContent value="story" className="space-y-4 mt-4">
                                         <StoryConfigSection />
                                     </TabsContent>
                                 </Tabs>
