@@ -3,6 +3,15 @@ import Google from "next-auth/providers/google"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import { prisma } from "@/lib/prisma"
 
+// Validate required environment variables
+if (!process.env.AUTH_SECRET) {
+  throw new Error('AUTH_SECRET environment variable is required for NextAuth v5');
+}
+
+if (!process.env.AUTH_GOOGLE_ID || !process.env.AUTH_GOOGLE_SECRET) {
+  console.warn('Google OAuth credentials not configured. Authentication will not work.');
+}
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(prisma),
   providers: [
@@ -19,8 +28,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   callbacks: {
     async signIn({ user }) {
       try {
-        if (!user.email) return false;
-        
+        if (!user.email) {
+          console.error('Sign-in attempted without email');
+          return false;
+        }
+
         // Check if user has a default workspace, create one if not
         const dbUser = await prisma.user.findUnique({
           where: { email: user.email },
@@ -40,32 +52,43 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             where: { id: dbUser.id },
             data: { defaultWorkspaceId: workspace.id },
           });
+
+          console.log(`Created default workspace for user ${dbUser.id}`);
         }
-        
+
         return true;
       } catch (error) {
         console.error('Error in sign-in callback:', error);
-        return true; // Allow sign in even if workspace creation fails
+        // Allow sign in even if workspace creation fails
+        return true;
       }
     },
     async session({ session, user }) {
-      if (session.user) {
-        session.user.id = user.id;
-        
-        // Add default workspace to session
-        const dbUser = await prisma.user.findUnique({
-          where: { id: user.id },
-          select: { defaultWorkspaceId: true },
-        });
-        
-        if (dbUser?.defaultWorkspaceId && session.user) {
-          (session.user as { defaultWorkspaceId?: string }).defaultWorkspaceId = dbUser.defaultWorkspaceId;
+      try {
+        if (session.user) {
+          session.user.id = user.id;
+
+          // Add default workspace to session
+          const dbUser = await prisma.user.findUnique({
+            where: { id: user.id },
+            select: { defaultWorkspaceId: true },
+          });
+
+          if (dbUser?.defaultWorkspaceId && session.user) {
+            (session.user as { defaultWorkspaceId?: string }).defaultWorkspaceId = dbUser.defaultWorkspaceId;
+          }
         }
+
+        return session;
+      } catch (error) {
+        console.error('Error in session callback:', error);
+        // Return session without workspace ID if database query fails
+        return session;
       }
-      return session;
     },
   },
   session: {
     strategy: "database",
   },
+  debug: process.env.NODE_ENV === 'development',
 })
