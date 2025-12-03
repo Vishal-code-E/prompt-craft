@@ -110,7 +110,7 @@ export async function generateStructure(
         if (context?.workspaceId) {
             const estimatedCredits = calculateCreditCost(inputTokens, maxTokens || 1000);
             const hasCredits = await checkCredits(context.workspaceId, estimatedCredits);
-            
+
             if (!hasCredits) {
                 throw new Error('Insufficient credits. Please purchase more credits to continue.');
             }
@@ -160,7 +160,6 @@ export async function generateStructure(
 
         return result;
     } catch (error) {
-        success = false;
         errorMessage = error instanceof Error ? error.message : 'Unknown error';
 
         // Log failed attempt
@@ -303,10 +302,10 @@ async function generateWithGoogle(
 
 // Cohere implementation (placeholder)
 async function generateWithCohere(
-    input: string,
-    model?: string,
-    temperature?: number,
-    maxTokens?: number
+    _input: string,
+    _model?: string,
+    _temperature?: number,
+    _maxTokens?: number
 ): Promise<string> {
     // Placeholder for Cohere API
     throw new Error('Cohere provider not yet implemented. Please use OpenAI or Anthropic, or implement this provider.');
@@ -319,10 +318,10 @@ async function generateWithCohere(
 
 // Local model implementation (placeholder)
 async function generateWithLocal(
-    input: string,
-    model?: string,
-    temperature?: number,
-    maxTokens?: number
+    _input: string,
+    _model?: string,
+    _temperature?: number,
+    _maxTokens?: number
 ): Promise<string> {
     // Placeholder for local model (e.g., Ollama, LM Studio)
     throw new Error('Local model provider not yet implemented. Please use OpenAI or Anthropic, or implement this provider.');

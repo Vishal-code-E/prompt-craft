@@ -15,7 +15,7 @@ interface AlertConfig {
  * @param config Alert configuration
  * @param creditsRemaining Number of credits remaining
  */
-async function sendEmailAlert(config: AlertConfig, creditsRemaining: number) {
+async function sendEmailAlert(config: AlertConfig, _creditsRemaining: number) {
   // TODO: Integrate with SendGrid, Resend, or other email service
   // Example with Resend:
   /*
@@ -70,8 +70,8 @@ export async function checkAndSendCreditAlert(workspaceId: string) {
   if (!alertStatus.shouldAlert) {
     return {
       sent: false,
-      reason: alertStatus.creditsRemaining <= alertStatus.threshold 
-        ? 'Alert already sent' 
+      reason: alertStatus.creditsRemaining <= alertStatus.threshold
+        ? 'Alert already sent'
         : 'Credits above threshold',
     };
   }
